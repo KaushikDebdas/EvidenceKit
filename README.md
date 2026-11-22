@@ -43,64 +43,59 @@ Bug reports and test evidence take too long: a screenshot here, the URL copied t
 <table>
 <tr>
 <td width="50%" valign="top">
-
-### 📸 Capture
-Twelve capture modes: visible area, **full page**, area, element, **dual select**, **split view**, **scroll box**, **mobile view**, screen / app, delayed capture and more. Open menus and tooltips stay in the picture.
-
-<img src="docs/media/feature-capture.jpg" alt="Capture modes">
+<h3>📸 Capture</h3>
+<p>Twelve capture modes: visible area, <b>full page</b>, area, element, <b>dual select</b>, <b>split view</b>, <b>scroll box</b>, <b>mobile view</b>, screen / app and delayed capture. Open menus and tooltips stay in the picture.</p>
 </td>
 <td width="50%" valign="top">
-
-### 🕒 URL & real time on every shot
-A browser-style bar with the page address and the date / time is stamped on the picture: your choice of format, size, and position.
-
-<img src="docs/media/feature-url-time.jpg" alt="URL and time bar">
+<h3>🕒 URL &amp; real time on every shot</h3>
+<p>A browser-style bar with the page address and the date / time is stamped on the picture: your choice of format, size and position.</p>
 </td>
 </tr>
 <tr>
-<td valign="top">
-
-### ✏️ Annotate
-Arrows, boxes, numbered badges, **QA stamps** (PASS · FAIL · BUG · BLOCKED …), highlight, spotlight, magnifier, blur and redact, crop, and a frame. Saves as PNG, JPG, WebP or PDF.
-
-<img src="docs/media/feature-annotate.jpg" alt="Annotation editor">
+<td width="50%" align="center"><img src="docs/media/feature-capture.jpg" width="370" alt="Capture modes"></td>
+<td width="50%" align="center"><img src="docs/media/feature-url-time.jpg" width="370" alt="URL and time bar"></td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<h3>✏️ Annotate</h3>
+<p>Arrows, boxes, numbered badges, <b>QA stamps</b> (PASS · FAIL · BUG · BLOCKED …), highlight, spotlight, magnifier, blur and redact, crop and a frame. Saves as PNG, JPG, WebP or PDF.</p>
 </td>
-<td valign="top">
-
-### 🐞 Console & network in the picture
-Logs are recorded quietly in the background. Add the console and network panels to a screenshot, or export them as text, JSON or **HAR**.
-
-<img src="docs/media/feature-logs.jpg" alt="Console and network logs">
+<td width="50%" valign="top">
+<h3>🐞 Console &amp; network in the picture</h3>
+<p>Logs are recorded quietly in the background. Add the console and network panels to a screenshot, or export them as text, JSON or <b>HAR</b>.</p>
 </td>
 </tr>
 <tr>
-<td valign="top">
-
-### 🎬 Record · Trim · Share
-Record a tab, a window or the entire screen (up to 4K / 60 fps, MP4 or WebM) with sound, microphone and a camera bubble. Trim it, make a GIF, and get the **repro steps** with their time in the video.
-
-<img src="docs/media/feature-recorder.jpg" alt="Screen recorder">
+<td width="50%" align="center"><img src="docs/media/feature-annotate.jpg" width="370" alt="Annotation editor"></td>
+<td width="50%" align="center"><img src="docs/media/feature-logs.jpg" width="370" alt="Console and network logs"></td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<h3>🎬 Record · Trim · Share</h3>
+<p>Record a tab, a window or the entire screen (up to 4K / 60 fps, MP4 or WebM) with sound, microphone and a camera bubble. Trim it, make a GIF, and get the <b>repro steps</b> with their time in the video.</p>
 </td>
-<td valign="top">
-
-### 👣 Every click becomes a step
-The **Step guide** turns each click and typed field into a step with a picture and a written title. Passwords are never written.
-
-<img src="docs/media/feature-step-guide.jpg" alt="Step guide">
+<td width="50%" valign="top">
+<h3>👣 Every click becomes a step</h3>
+<p>The <b>Step guide</b> turns each click and typed field into a step with a picture and a written title. Passwords are never written.</p>
 </td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src="docs/media/feature-recorder.jpg" width="370" alt="Screen recorder"></td>
+<td width="50%" align="center"><img src="docs/media/feature-step-guide.jpg" width="370" alt="Step guide"></td>
 </tr>
 <tr>
 <td colspan="2" valign="top">
-
-### 📘 From clicks to a finished document: User Manual & Test Evidence
-Two separate documents. Choose **＋ User Manual** or **＋ Test Evidence** whenever you add something (press both to add it to both).
-
-- **User Manual**: sections, auto-written step titles, your logo and brand colour, and a table of contents.
-- **Test Evidence**: test cases with ID, precondition, **expected / actual result**, **Pass / Fail / Blocked**, bug ID, checkpoints, and a summary.
-- Export to **Word (.docx)**, PDF, HTML or Markdown. **Backup & restore** everything as one `.zip`.
-
-<img src="docs/media/ui-test-evidence.png" alt="The Test Evidence page">
+<h3>📘 From clicks to a finished document: User Manual &amp; Test Evidence</h3>
+<p>Two separate documents. Choose <b>＋ User Manual</b> or <b>＋ Test Evidence</b> whenever you add something (press both to add it to both).</p>
+<ul>
+<li><b>User Manual</b>: sections, auto-written step titles, your logo and brand colour, and a table of contents.</li>
+<li><b>Test Evidence</b>: test cases with ID, precondition, <b>expected / actual result</b>, <b>Pass / Fail / Blocked</b>, bug ID, checkpoints and a summary.</li>
+<li>Export to <b>Word (.docx)</b>, PDF, HTML or Markdown. <b>Backup &amp; restore</b> everything as one <code>.zip</code>.</li>
+</ul>
 </td>
+</tr>
+<tr>
+<td colspan="2" align="center"><img src="docs/media/ui-test-evidence.png" width="760" alt="The Test Evidence page"></td>
 </tr>
 </table>
 
@@ -108,9 +103,13 @@ Two separate documents. Choose **＋ User Manual** or **＋ Test Evidence** when
 <summary><b>See an exported Test Evidence document</b></summary>
 <br>
 
-| Word (.docx) | HTML |
-|---|---|
-| <img src="docs/media/ui-evidence-word.png" width="420" alt="Test Evidence in Word"> | <img src="docs/media/ui-evidence-html.png" width="420" alt="Test Evidence as HTML"> |
+<table>
+<tr><th width="50%">Word (.docx)</th><th width="50%">HTML</th></tr>
+<tr>
+<td width="50%" align="center" valign="top"><img src="docs/media/ui-evidence-word.png" width="370" alt="Test Evidence in Word"></td>
+<td width="50%" align="center" valign="top"><img src="docs/media/ui-evidence-html.png" width="370" alt="Test Evidence as HTML"></td>
+</tr>
+</table>
 
 </details>
 
