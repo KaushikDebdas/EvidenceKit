@@ -1,0 +1,54 @@
+* { box-sizing: border-box; }
+:root { --ink: #111827; --mut: #6b7280; --line: #e5e7eb; --acc: #4f46e5; }
+body { margin: 0; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color: var(--ink); background: #f6f7f9; }
+.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; }
+header { position: sticky; top: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--line); }
+.brand { font-weight: 650; font-size: 16px; display: flex; gap: 8px; align-items: center; }
+.brand .i { color: var(--acc); }
+.sub { color: var(--mut); font-weight: 400; }
+.saved { opacity: 0; transition: opacity .25s; color: #059669; font-weight: 600; }
+.saved.show { opacity: 1; }
+.wrap { max-width: 1180px; margin: 20px auto; padding: 0 20px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+.card h2 { margin: 0 0 6px; font-size: 15px; }
+.hint, .mut { color: var(--mut); font-size: 12.5px; margin: 0 0 10px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; align-items: start; }
+.wide { grid-column: 1 / -1; }
+.f { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: #374151; }
+.f input[type=text], .f input[type=number], .f select { padding: 7px 9px; border: 1px solid #d1d5db; border-radius: 8px; font: inherit; background: #fff; }
+.f input[type=color] { width: 56px; height: 34px; padding: 2px; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; }
+.sw { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 0; }
+.sw input { display: none; }
+.sw i { width: 36px; height: 20px; background: #d1d5db; border-radius: 999px; position: relative; transition: background .15s; flex: none; }
+.sw i::after { content: ""; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+.sw input:checked + i { background: var(--acc); }
+.sw input:checked + i::after { transform: translateX(16px); }
+.sw b { font-weight: 500; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.btn { padding: 8px 14px; border: 1px solid #d1d5db; background: #fff; border-radius: 8px; font: inherit; cursor: pointer; }
+.btn:hover { background: #f3f4f6; }
+.btn.danger { background: #dc2626; border-color: #dc2626; color: #fff; }
+.btn.danger:hover { background: #b91c1c; }
+.btn.on { background: #ecfdf5; border-color: #6ee7b7; color: #047857; }
+.where { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px; }
+.where .opt { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 10px; cursor: pointer; color: var(--ink); }
+.where .opt:has(input:checked) { border-color: var(--acc); background: #eef2ff; }
+.where .opt.dis { opacity: .5; cursor: not-allowed; }
+.where .opt span { display: flex; flex-direction: column; }
+.where small { color: var(--mut); font-size: 12px; word-break: break-all; }
+.dirrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 8px; }
+.dirrow .ok { color: #059669; }
+.dirrow .warn { color: #b45309; }
+@media (max-width: 600px) { .where { grid-template-columns: 1fr; } }
+.right .sticky { position: sticky; top: 72px; }
+#pv { width: 100%; border: 1px solid var(--line); border-radius: 8px; display: block; margin: 8px 0; }
+@media (max-width: 960px) { .cols { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  header { padding: 10px 14px; }
+  .wrap { padding: 0 10px; margin: 12px auto; }
+  .card { padding: 14px; }
+  .row .btn { flex: 1 1 auto; }
+}
+
+.appicon { width: 26px; height: 26px; flex: none; display: block; }

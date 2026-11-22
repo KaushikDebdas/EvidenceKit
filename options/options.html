@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../icons/icon16.png">
+<title>EvidenceKit — Settings</title>
+<link rel="stylesheet" href="options.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 12h8"/></symbol>
+<symbol id="i-page" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+<symbol id="i-guide" viewBox="0 0 24 24"><path d="M14 4.1 12 6M5.1 8l-2.9-.8M6 12l-1.9 2M7.2 2.2 8 5.1"/><path d="M9 9.7a.5.5 0 0 1 .7-.7l11 4.5a.5.5 0 0 1-.1.9l-4.3 1a1 1 0 0 0-.8.8l-1 4.3a.5.5 0 0 1-.9.1z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6M12 19h8"/></symbol>
+<symbol id="i-select" viewBox="0 0 24 24"><path d="M4 4.7a.5.5 0 0 1 .7-.7l16 6.5a.5.5 0 0 1-.1.9l-6.1 1.6a2 2 0 0 0-1.4 1.4l-1.6 6.1a.5.5 0 0 1-.9.1z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 7h10v10M7 17 17 7"/></symbol>
+<symbol id="i-line" viewBox="0 0 24 24"><path d="M5 19 19 5"/></symbol>
+<symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol>
+<symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M21.2 6.8a1 1 0 0 0-4-4L3.8 16.2a2 2 0 0 0-.5.8L2 21.4a.5.5 0 0 0 .6.6l4.4-1.3a2 2 0 0 0 .8-.5z"/><path d="m15 5 4 4"/></symbol>
+<symbol id="i-highlight" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></symbol>
+<symbol id="i-type" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+<symbol id="i-badge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 9.5 2-1.5v8"/></symbol>
+<symbol id="i-blur" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+<symbol id="i-redact" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="1.5" fill="currentColor"/></symbol>
+<symbol id="i-crop" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 19V5"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m19 12-7 7-7-7M12 5v14"/></symbol>
+<symbol id="i-dup" viewBox="0 0 24 24"><rect width="13" height="13" x="9" y="9" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+<symbol id="i-panel" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></symbol>
+<symbol id="i-element" viewBox="0 0 24 24"><rect x="3" y="3" width="14" height="14" rx="2" stroke-dasharray="3 3"/><path d="M13 13l7.5 2.6-3.2 1.3-1.3 3.2z"/></symbol>
+<symbol id="i-dual" viewBox="0 0 24 24"><rect x="2" y="5" width="9" height="14" rx="1.5"/><rect x="13" y="5" width="9" height="14" rx="1.5"/></symbol>
+<symbol id="i-split" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+<symbol id="i-spot" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" fill-opacity=".25"/><rect x="7" y="7" width="10" height="10" rx="1.5" fill="var(--bg-solid,#fff)"/></symbol>
+<symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
+<symbol id="i-stamp" viewBox="0 0 24 24"><path d="M5 22h14M19.3 14.3A2.4 2.4 0 0 0 17.6 14H6.4a2.4 2.4 0 0 0-2.4 2.4V18h16v-1.6c0-.6-.3-1.3-.7-1.7zM9 14V8.5a3 3 0 1 1 6 0V14"/></symbol>
+<symbol id="i-eraser" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21M22 21H7M5 11l9 9"/></symbol>
+<symbol id="i-pipette" viewBox="0 0 24 24"><path d="m2 22 1-1h3l9-9M3 21v-3l9-9M15 6l3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3z"/></symbol>
+<symbol id="i-frame" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+<symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M10 13h4M7 16h10"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><circle cx="12" cy="10" r="3"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4v16l14-8z"/></symbol>
+<symbol id="i-tab" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20M8 4v5"/></symbol>
+<symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M7 5.5h.01M10 5.5h.01"/></symbol>
+<symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor"/></symbol>
+<symbol id="i-hlbox" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor" fill-opacity=".3"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+<symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+<symbol id="i-scrollbox" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M17 7v10M15.5 9 17 7l1.5 2M15.5 15l1.5 2 1.5-2M6 8h7M6 12h7M6 16h7"/></symbol>
+<symbol id="i-mobile" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+<symbol id="i-gif" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9.5 10H8a1.5 1.5 0 0 0-1.5 1.5v1A1.5 1.5 0 0 0 8 14h1.5v-2H8.5M12 10v4M15 14v-4h2.5M15 12h2"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></symbol>
+</svg>
+
+<header>
+  <div class="brand"><img class="appicon" src="../icons/icon48.png" alt="" width="48" height="48"> EvidenceKit <span class="sub">Settings</span></div>
+  <div id="saved" class="saved">Saved ✓</div>
+</header>
+
+<div class="wrap">
+  <div class="cols">
+    <div class="left">
+
+      <section class="card">
+        <h2>Stamp on screenshot</h2>
+        <p class="hint">A bar like a browser address bar is added to every screenshot.</p>
+        <div class="grid">
+          <label class="sw"><input type="checkbox" data-k="url"><i></i><b>Show page URL</b></label>
+          <label class="f">Date / time on the bar
+            <select id="dtSel"><option value="both">Date and time</option><option value="date">Date only</option><option value="time">Time only</option><option value="none">None</option></select></label>
+          <label class="f">Position
+            <select data-k="stampPos"><option value="top">Top (above the screenshot)</option><option value="bottom">Bottom</option></select></label>
+          <label class="f">Style
+            <select data-k="stampStyle"><option value="dark">Chrome dark</option><option value="light">Minimal light</option></select></label>
+          <label class="f">Time format
+            <select data-k="timeFormat"><option value="12">12-hour (10:40:12 PM)</option><option value="24">24-hour (22:40:12)</option></select></label>
+          <label class="f">Bar size
+            <select data-k="stampSize"><option value="s">Small</option><option value="m">Medium (automatic)</option><option value="l">Large</option><option value="xl">Extra large</option></select></label>
+          <label class="f">Date format
+            <select data-k="dateFormat">
+              <option value="YYYY-MM-DD">2026-11-20</option><option value="DD-MM-YYYY">20-11-2026</option><option value="DD/MM/YYYY">20/11/2026</option>
+              <option value="MM/DD/YYYY">11/20/2026</option><option value="DD MMM YYYY">20 Nov 2026</option><option value="MMM D, YYYY">Nov 20, 2026</option>
+              <option value="custom">Custom pattern…</option>
+            </select></label>
+          <label class="f" id="customRow">Custom pattern
+            <input type="text" data-k="dateCustom" placeholder="DD/MM/YYYY" spellcheck="false">
+            <span class="mut">Tokens: <b>DD</b> 05 · <b>D</b> 5 · <b>MM</b> 11 · <b>M</b> 11 · <b>MMM</b> Nov · <b>MMMM</b> November · <b>YYYY</b> 2026 · <b>YY</b> 26 · <b>[text]</b> written as is. Example: <b id="dateEx"></b></span></label>
+          <label class="sw"><input type="checkbox" data-k="showTz"><i></i><b>Show time zone name</b></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Saving</h2>
+        <div class="grid">
+          <label class="f">After capture
+            <select data-k="afterAction">
+              <option value="edit">Open editor</option>
+              <option value="saveedit">Save + open editor</option>
+              <option value="save">Save to Downloads</option>
+              <option value="copy">Copy to clipboard</option>
+              <option value="copysave">Copy + save</option>
+              <option value="manual">Add to User Manual</option>
+            </select></label>
+          <label class="f">Image format
+            <select data-k="imageFormat"><option value="png">PNG (best quality)</option><option value="jpg">JPG (smaller file)</option></select></label>
+          <label class="f">JPG quality <span id="qv" class="mut"></span>
+            <input type="range" min="0.5" max="1" step="0.01" data-k="jpgQuality"></label>
+          <div class="f wide">Save files to
+            <div class="where">
+              <label class="opt"><input type="radio" name="saveTarget" value="downloads"> <span><b>Downloads folder</b><small>Downloads / <span id="dlSub">QA-Evidence</span></small></span></label>
+              <label class="opt" id="folderOpt"><input type="radio" name="saveTarget" value="folder"> <span><b>A folder I choose</b><small id="dirName">No folder chosen yet</small></span></label>
+            </div>
+            <div class="dirrow">
+              <button id="pickDir" class="btn">Choose folder…</button>
+              <button id="regrant" class="btn" hidden>Allow access again</button>
+              <span id="dirState" class="mut"></span>
+            </div>
+          </div>
+          <label class="f">Folder inside Downloads
+            <input type="text" data-k="saveFolder" placeholder="QA-Evidence"></label>
+          <label class="f wide">File name
+            <input type="text" data-k="fileTemplate" placeholder="{host}_{date}_{time}">
+            <span class="mut">Tokens: {host} {title} {date} {time} — example: <b id="fnEx"></b></span></label>
+          <label class="sw"><input type="checkbox" data-k="saveAs"><i></i><b>Ask where to save every time</b></label>
+          <label class="sw"><input type="checkbox" data-k="notify"><i></i><b>Show “Saved / Copied” message on the page</b></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Capture modes</h2>
+        <p class="hint">Area, Element and Dual select work on a frozen copy of the page, so open dropdowns, tooltips and hover menus stay in the picture.</p>
+        <div class="grid">
+          <label class="sw"><input type="checkbox" data-k="freezeArea"><i></i><b>Freeze the page while selecting an area</b></label>
+          <label class="f">Delay before capture (popup timer)
+            <select data-k="captureDelay"><option value="0">No delay</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select></label>
+          <label class="f">Dual select layout
+            <select data-k="dualLayout"><option value="auto">Automatic</option><option value="side">Side by side</option><option value="stack">One above the other</option></select></label>
+          <label class="sw"><input type="checkbox" data-k="dualLabels"><i></i><b>Number the two areas (1, 2)</b></label>
+          <label class="f">Split view layout
+            <select data-k="splitLayout"><option value="auto">Automatic</option><option value="side">Side by side</option><option value="stack">Stacked</option><option value="grid">Grid</option></select></label>
+          <label class="sw"><input type="checkbox" data-k="splitFull"><i></i><b>Split view: full page in every pane</b></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Console &amp; network logs</h2>
+        <p class="hint">Captured quietly inside the page from the moment it loads — no “debugging” bar. Tabs opened before the extension was installed need one reload.</p>
+        <div class="grid">
+          <label class="sw"><input type="checkbox" data-k="autoLogs"><i></i><b>Capture logs automatically</b></label>
+          <label class="sw"><input type="checkbox" data-k="keepLogs"><i></i><b>Keep logs across page loads</b></label>
+          <label class="sw"><input type="checkbox" data-k="consoleInImg"><i></i><b>Console panel in screenshot</b></label>
+          <label class="sw"><input type="checkbox" data-k="networkInImg"><i></i><b>Network panel in screenshot</b></label>
+          <label class="sw"><input type="checkbox" data-k="logErrorsOnly"><i></i><b>Errors / failed only</b></label>
+          <label class="f">Max lines per panel
+            <input type="number" min="3" max="80" data-k="logLines"></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Step guide (Scribe-style)</h2>
+        <p class="hint">Click <b>Record step guide</b> in the popup, then use any website normally. Every click becomes a numbered step with a highlighted screenshot.</p>
+        <div class="grid">
+          <label class="f">Highlight color <input type="color" data-k="guideColor"></label>
+          <label class="sw"><input type="checkbox" data-k="guideFirst"><i></i><b>First step shows the starting page</b></label>
+          <label class="sw"><input type="checkbox" data-k="guideTyping"><i></i><b>Record typing into fields as steps</b></label>
+          <label class="sw"><input type="checkbox" data-k="guideValues"><i></i><b>Write typed values into the step text</b></label>
+        </div>
+        <p class="mut">Passwords are never written into step text.</p>
+      </section>
+
+      <section class="card">
+        <h2>Editor defaults</h2>
+        <div class="grid">
+          <label class="f">Drawing color <input type="color" data-k="editColor"></label>
+          <label class="f">Line width <select data-k="editWidth"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option></select></label>
+          <label class="f">Text size <input type="number" min="8" max="200" data-k="editFont"></label>
+          <label class="f">Step badge size <input type="number" min="8" max="80" data-k="badgeSize"></label>
+          <label class="f">Theme (editor, popup, recorder) <select data-k="theme"><option value="light">Light</option><option value="dark">Dark</option></select></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Screen recording</h2>
+        <div class="grid">
+          <label class="f">Quality <select data-k="recQuality"><option value="720">720p</option><option value="1080">1080p (Full HD)</option><option value="1440">1440p</option><option value="2160">4K</option></select></label>
+          <label class="f">Frame rate <select data-k="recFps"><option value="30">30 fps</option><option value="60">60 fps</option></select></label>
+          <label class="f">Format <select data-k="recFormat"><option value="mp4">MP4 (plays everywhere)</option><option value="webm">WebM (smaller)</option></select></label>
+          <label class="f">Countdown <select data-k="recCountdownSec"><option value="0">Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select></label>
+          <label class="sw"><input type="checkbox" data-k="recSys"><i></i><b>Record tab / system audio</b></label>
+          <label class="sw"><input type="checkbox" data-k="recMic"><i></i><b>Record microphone</b></label>
+          <label class="sw"><input type="checkbox" data-k="recCamera"><i></i><b>Camera bubble</b></label>
+          <label class="sw"><input type="checkbox" data-k="recClicks"><i></i><b>Show my clicks in the recording</b></label>
+          <label class="sw"><input type="checkbox" data-k="recAutoSave"><i></i><b>Save automatically when stopped</b></label>
+          <label class="sw"><input type="checkbox" data-k="recSteps"><i></i><b>Write repro steps (clicks / typing) with video time</b></label>
+          <label class="sw"><input type="checkbox" data-k="recStepShots"><i></i><b>Screenshot for every repro step</b></label>
+          <label class="sw"><input type="checkbox" data-k="recStepValues"><i></i><b>Write typed values in steps (never passwords)</b></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Shortcuts &amp; data</h2>
+        <div class="row">
+          <button id="shortcuts" class="btn">Change keyboard shortcuts</button>
+          <button id="clearSteps" class="btn danger">Delete all steps (User Manual + Test Evidence)</button>
+          <button id="reset" class="btn danger">Reset settings</button>
+        </div>
+        <p class="mut">Element, Dual select, Split view, Delayed capture and Screen recorder have no default key — give them one on the shortcuts page.</p>
+        <div class="row">
+          <button id="clearTemp" class="btn" title="Screenshots kept for 24 hours for “Last capture” and the editor, and the pictures of screen-recorder repro steps. The User Manual and Test Evidence are not touched.">Delete temporary screenshots now</button>
+        </div>
+        <p class="mut" id="storageInfo">Checking storage…</p>
+        <p class="mut">Everything stays on your computer. Nothing is uploaded.</p>
+      </section>
+    </div>
+
+    <div class="right">
+      <div class="sticky card">
+        <h2>Preview</h2>
+        <canvas id="pv"></canvas>
+        <p class="mut">Updates as you change the stamp options.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="options.js"></script>
+</body>
+</html>

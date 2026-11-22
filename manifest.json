@@ -1,0 +1,89 @@
+{
+  "manifest_version": 3,
+  "name": "EvidenceKit",
+  "version": "1.0.0",
+  "description": "Screenshots with URL & time: visible, full page, area, element, dual select, split view. Annotation editor, console/network logs, step guides and screen recording for QA.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "EvidenceKit",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage",
+    "unlimitedStorage",
+    "downloads",
+    "clipboardWrite",
+    "offscreen",
+    "alarms"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "commands": {
+    "capture-visible": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Capture visible area"
+    },
+    "capture-area": {
+      "suggested_key": {
+        "default": "Alt+Shift+A"
+      },
+      "description": "Capture selected area"
+    },
+    "capture-full": {
+      "suggested_key": {
+        "default": "Alt+Shift+F"
+      },
+      "description": "Capture full page"
+    },
+    "record-guide": {
+      "suggested_key": {
+        "default": "Alt+Shift+G"
+      },
+      "description": "Start / stop step guide recording"
+    },
+    "capture-element": {
+      "description": "Capture an element (hover + click)"
+    },
+    "capture-dual": {
+      "description": "Dual select: two areas in one image"
+    },
+    "capture-scroll": {
+      "description": "Scroll box: capture a scrolling list, table or frame in full"
+    },
+    "capture-split": {
+      "description": "Split view: current tab of each window side by side (one window: this tab + the last one you used)"
+    },
+    "capture-delayed": {
+      "description": "Delayed capture of the visible area (uses the delay from Settings)"
+    },
+    "record-screen": {
+      "description": "Open the screen recorder"
+    },
+    "rec-add-step": {
+      "description": "Screen recorder: add a step now (set it to Global to use it in any program)"
+    }
+  }
+}

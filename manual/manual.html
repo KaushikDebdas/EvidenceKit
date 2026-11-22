@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../icons/icon16.png">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>User Manual — EvidenceKit</title>
+<link rel="stylesheet" href="manual.css">
+</head>
+<body>
+<div id="bar" class="noprint">
+  <b class="ttl"><img class="appicon" src="../icons/icon48.png" alt="" width="48" height="48"> <span id="barTitle">User Manual builder</span></b>
+  <div class="modeseg" role="group" aria-label="Document type">
+    <button data-mode="manual" title="Step-by-step guide for users">User Manual</button>
+    <button data-mode="evidence" title="Test cases with expected / actual result and Pass / Fail">Test Evidence</button>
+  </div>
+  <span class="hint" id="barHint">Add screenshots with “After capture → Add to Manual / Test Evidence” or the editor’s “Add to Manual”. Paste (Ctrl+V) an image here to add it as a step.</span>
+  <span class="spacer"></span>
+  <div class="btns">
+    <label class="filebtn">＋ Add image<input type="file" id="addFile" accept="image/*" multiple hidden></label>
+    <label class="scope" hidden>Export <select id="expScope"><option value="all">Whole manual</option></select></label>
+    <label class="scope evonly" title="Which step pictures go into the exported evidence">Screenshots <select id="shotScope">
+      <option value="all">All steps</option>
+      <option value="key">Checkpoints + last step</option>
+      <option value="none">None</option>
+    </select></label>
+    <button id="expDocx" class="primary" title="Word document with all pictures — opens in Word, Google Docs and LibreOffice">📄 Word (.docx)</button>
+    <button id="expPdf">🖨 PDF (print)</button>
+    <button id="expHtml">HTML</button>
+    <button id="expMd">Markdown (.zip)</button>
+    <button id="backupBtn" title="Save every step, section, picture and setting of this manual into one .zip file">⬇ Backup</button>
+    <label class="filebtn" title="Load a backup .zip (from this or another computer)">⬆ Restore<input type="file" id="restoreFile" accept=".zip,application/zip" hidden></label>
+    <button id="clearAll" class="danger">🗑 Clear all</button>
+  </div>
+</div>
+<main>
+  <div id="waiting" class="waiting noprint" hidden></div>
+  <div class="brandrow noprint">
+    <label class="filebtn sm" title="Shown at the top of the manual and in every export">Logo<input type="file" id="logoFile" accept="image/*" hidden></label>
+    <button id="logoDel" class="sm" hidden>Remove logo</button>
+    <label class="sm colorpick">Color <input type="color" id="brandColor" value="#4f46e5"></label>
+    <label class="sm"><input type="checkbox" id="tocOn" checked> Table of contents</label>
+    <span class="spacer"></span>
+    <button id="addSection" class="sm" title="Add a section heading (e.g. Registration, Login) at the end">＋ Section</button>
+    <button id="suggestAll" class="sm" title="Fill empty step titles from what was clicked or captured">✨ Suggest titles</button>
+  </div>
+  <div class="doc-head">
+    <img id="logoImg" alt="" hidden>
+    <input id="title" class="doc-title" value="User Manual" placeholder="Manual title">
+  </div>
+  <div id="meta" class="meta"></div>
+  <section id="evInfo" class="evinfo evonly">
+    <div class="evgrid">
+      <label>Project / Module<input data-info="project" placeholder="e.g. ERP — Fixed Asset"></label>
+      <label>Ticket / Release<input data-info="ticket" placeholder="e.g. FAHOV2-643"></label>
+      <label>Build / Version<input data-info="build" placeholder="e.g. v2.4.1"></label>
+      <label>Environment<input data-info="env" placeholder="e.g. UAT, Chrome 157, Windows 11"></label>
+      <label>Tested by<input data-info="tester" placeholder="Your name"></label>
+      <label>Test date<input data-info="date" placeholder="e.g. 22 Nov 2026"></label>
+    </div>
+    <div id="evSummary" class="evsum"></div>
+  </section>
+  <nav id="toc" class="toc" hidden></nav>
+  <div id="steps"></div>
+  <div id="empty" class="empty noprint">No steps yet. Tip: group steps into sections such as “Registration” and “Login” with ＋ Section or “New section here”. Set <b>After capture → Add to Manual / Test Evidence</b> in the popup and press <b>＋ User Manual</b> after each screenshot, or record a <b>Step guide</b>.</div>
+</main>
+
+<div id="edModal" class="modal noprint" hidden>
+  <div class="mframe">
+    <div class="mhead">
+      <b>Edit image — Step <span id="edN"></span></b>
+      <span class="hint">Press “Save to step” in the editor when you are done.</span>
+      <button id="edClose">✕ Close</button>
+    </div>
+    <iframe id="edFrame" title="Editor"></iframe>
+  </div>
+</div>
+<dialog id="restoreDlg" class="dlg">
+  <h3>Restore a backup</h3>
+  <p id="restoreInfo"></p>
+  <label class="sm"><input type="checkbox" id="restoreSettings"> Also restore the extension settings from the backup</label>
+  <div class="dlg-btns">
+    <button id="restoreReplace" class="danger">Replace everything</button>
+    <button id="restoreAdd" class="primary">Add to what I have</button>
+    <button id="restoreCancel">Cancel</button>
+  </div>
+</dialog>
+<div id="toast"></div>
+<div id="okbar" role="status"><span class="okc">✓</span><div><div class="okt"></div><div class="okd"></div></div><button class="okx" id="okClose" title="Close">✕</button></div>
+<script src="../lib/jszip.min.js"></script>
+<script src="../lib/fabric.min.js"></script>
+<script type="module" src="manual.js"></script>
+</body>
+</html>

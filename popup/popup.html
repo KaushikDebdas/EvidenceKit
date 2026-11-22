@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../icons/icon16.png">
+<title>EvidenceKit</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 12h8"/></symbol>
+<symbol id="i-page" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+<symbol id="i-guide" viewBox="0 0 24 24"><path d="M14 4.1 12 6M5.1 8l-2.9-.8M6 12l-1.9 2M7.2 2.2 8 5.1"/><path d="M9 9.7a.5.5 0 0 1 .7-.7l11 4.5a.5.5 0 0 1-.1.9l-4.3 1a1 1 0 0 0-.8.8l-1 4.3a.5.5 0 0 1-.9.1z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6M12 19h8"/></symbol>
+<symbol id="i-select" viewBox="0 0 24 24"><path d="M4 4.7a.5.5 0 0 1 .7-.7l16 6.5a.5.5 0 0 1-.1.9l-6.1 1.6a2 2 0 0 0-1.4 1.4l-1.6 6.1a.5.5 0 0 1-.9.1z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 7h10v10M7 17 17 7"/></symbol>
+<symbol id="i-line" viewBox="0 0 24 24"><path d="M5 19 19 5"/></symbol>
+<symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol>
+<symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M21.2 6.8a1 1 0 0 0-4-4L3.8 16.2a2 2 0 0 0-.5.8L2 21.4a.5.5 0 0 0 .6.6l4.4-1.3a2 2 0 0 0 .8-.5z"/><path d="m15 5 4 4"/></symbol>
+<symbol id="i-highlight" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></symbol>
+<symbol id="i-type" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+<symbol id="i-badge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 9.5 2-1.5v8"/></symbol>
+<symbol id="i-blur" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+<symbol id="i-redact" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="1.5" fill="currentColor"/></symbol>
+<symbol id="i-crop" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 19V5"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m19 12-7 7-7-7M12 5v14"/></symbol>
+<symbol id="i-dup" viewBox="0 0 24 24"><rect width="13" height="13" x="9" y="9" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+<symbol id="i-panel" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></symbol>
+<symbol id="i-element" viewBox="0 0 24 24"><rect x="3" y="3" width="14" height="14" rx="2" stroke-dasharray="3 3"/><path d="M13 13l7.5 2.6-3.2 1.3-1.3 3.2z"/></symbol>
+<symbol id="i-dual" viewBox="0 0 24 24"><rect x="2" y="5" width="9" height="14" rx="1.5"/><rect x="13" y="5" width="9" height="14" rx="1.5"/></symbol>
+<symbol id="i-split" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+<symbol id="i-spot" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" fill-opacity=".25"/><rect x="7" y="7" width="10" height="10" rx="1.5" fill="var(--bg-solid,#fff)"/></symbol>
+<symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
+<symbol id="i-stamp" viewBox="0 0 24 24"><path d="M5 22h14M19.3 14.3A2.4 2.4 0 0 0 17.6 14H6.4a2.4 2.4 0 0 0-2.4 2.4V18h16v-1.6c0-.6-.3-1.3-.7-1.7zM9 14V8.5a3 3 0 1 1 6 0V14"/></symbol>
+<symbol id="i-eraser" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21M22 21H7M5 11l9 9"/></symbol>
+<symbol id="i-pipette" viewBox="0 0 24 24"><path d="m2 22 1-1h3l9-9M3 21v-3l9-9M15 6l3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3z"/></symbol>
+<symbol id="i-frame" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+<symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M10 13h4M7 16h10"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><circle cx="12" cy="10" r="3"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4v16l14-8z"/></symbol>
+<symbol id="i-tab" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20M8 4v5"/></symbol>
+<symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M7 5.5h.01M10 5.5h.01"/></symbol>
+<symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor"/></symbol>
+<symbol id="i-hlbox" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor" fill-opacity=".3"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+<symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+<symbol id="i-scrollbox" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M17 7v10M15.5 9 17 7l1.5 2M15.5 15l1.5 2 1.5-2M6 8h7M6 12h7M6 16h7"/></symbol>
+<symbol id="i-mobile" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+<symbol id="i-gif" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9.5 10H8a1.5 1.5 0 0 0-1.5 1.5v1A1.5 1.5 0 0 0 8 14h1.5v-2H8.5M12 10v4M15 14v-4h2.5M15 12h2"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></symbol>
+</svg>
+
+<div id="home">
+  <div class="top">
+    <div class="brand"><img class="appicon" src="../icons/icon48.png" alt="" width="48" height="48"><span>Evidence<b>Kit</b></span></div>
+    <div class="tools">
+      <button id="manual" class="icon" title="User Manual / Test Evidence"><svg class="i"><use href="#i-book"/></svg><span id="stepCount" class="dot"></span></button>
+      <button id="settings" class="icon" title="Settings"><svg class="i"><use href="#i-gear"/></svg></button>
+    </div>
+  </div>
+
+  <div id="err" class="err"></div>
+
+  <div class="sec-h"><span>Screenshot</span>
+    <div class="seg" id="delaySeg" title="Wait before capturing (open a menu meanwhile)">
+      <svg class="i xs"><use href="#i-timer"/></svg>
+      <button data-d="0">Off</button><button data-d="3">3s</button><button data-d="5">5s</button><button data-d="10">10s</button>
+    </div>
+  </div>
+  <div class="grid">
+    <button class="tile" data-cap="visible" title="Capture what you see now"><svg class="i"><use href="#i-monitor"/></svg><span>Visible</span><kbd data-cmd="capture-visible"></kbd></button>
+    <button class="tile" data-cap="full" title="Scroll and capture the whole page"><svg class="i"><use href="#i-page"/></svg><span>Full page</span><kbd data-cmd="capture-full"></kbd></button>
+    <button class="tile" data-cap="area" title="Drag to select part of the page"><svg class="i"><use href="#i-scan"/></svg><span>Area</span><kbd data-cmd="capture-area"></kbd></button>
+    <button class="tile" data-cap="element" title="Hover a button, card or table and click it"><svg class="i"><use href="#i-element"/></svg><span>Element</span><kbd data-cmd="capture-element"></kbd></button>
+    <button class="tile" data-cap="dual" title="Select two areas — they are joined into one image"><svg class="i"><use href="#i-dual"/></svg><span>Dual select</span></button>
+    <button class="tile" id="splitBtn" title="Several windows or tabs side by side in one image"><svg class="i"><use href="#i-split"/></svg><span>Split view</span></button>
+    <button class="tile" data-cap="scroll" title="A list, table, chat or frame that scrolls (up/down or sideways), captured in full"><svg class="i"><use href="#i-scrollbox"/></svg><span>Scroll box</span><kbd data-cmd="capture-scroll"></kbd></button>
+    <button class="tile" id="mobileBtn" title="See the page at phone / tablet size"><svg class="i"><use href="#i-mobile"/></svg><span>Mobile view</span></button>
+    <button class="tile" id="screenShot" title="Screenshot of the whole screen or another app window"><svg class="i"><use href="#i-window"/></svg><span>Screen / app</span></button>
+    <button class="tile" id="openImage" title="Annotate an image from your computer or clipboard"><svg class="i"><use href="#i-image"/></svg><span>Open image</span></button>
+    <button class="tile" id="lastShot" title="Open the last screenshot in the editor again"><svg class="i"><use href="#i-undo"/></svg><span>Last capture</span></button>
+  </div>
+
+  <div class="sec-h"><span>Record</span></div>
+  <div class="recs">
+    <button class="big rec" id="rec"><span class="ic"><svg class="i"><use href="#i-rec"/></svg></span><span class="t"><b>Record screen</b><small>Video of a tab, window or screen</small></span></button>
+    <button class="big" id="guide"><span class="ic"><svg class="i"><use href="#i-guide"/></svg></span><span class="t"><b id="guideText">Step guide</b><small id="guideSub">Each click becomes a step</small></span><kbd data-cmd="record-guide"></kbd></button>
+  </div>
+
+  <div class="card">
+    <div class="line">
+      <span class="lbl">Add to image</span>
+      <label class="chip"><input type="checkbox" id="url"><span>URL</span></label>
+      <label class="chip"><input type="checkbox" id="dDate"><span>Date</span></label>
+      <label class="chip"><input type="checkbox" id="dTime"><span>Time</span></label>
+    </div>
+    <div class="line">
+      <span class="lbl">Logs</span>
+      <label class="chip"><input type="checkbox" id="consoleInImg"><span>Console</span></label>
+      <label class="chip"><input type="checkbox" id="networkInImg"><span>Network</span></label>
+      <label class="chip" title="Only errors and failed requests"><input type="checkbox" id="logErrorsOnly"><span>Errors</span></label>
+    </div>
+    <div class="line">
+      <span class="lbl">After capture</span>
+      <select id="afterAction">
+        <option value="edit">Open editor</option>
+        <option value="saveedit">Save + open editor</option>
+        <option value="save">Save to Downloads</option>
+        <option value="copy">Copy to clipboard</option>
+        <option value="copysave">Copy + save</option>
+        <option value="manual">Add to Manual / Test Evidence</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card logs">
+    <div class="line">
+      <svg class="i s"><use href="#i-terminal"/></svg>
+      <span id="logText" class="grow">Checking…</span>
+      <button id="logReload" class="mini" style="display:none">Reload tab</button>
+    </div>
+  </div>
+</div>
+
+<!-- mobile / responsive chooser -->
+<div id="mobile" hidden>
+  <div class="top">
+    <button id="mobileBack" class="icon" title="Back"><svg class="i" style="transform:rotate(90deg)"><use href="#i-chev"/></svg></button>
+    <div class="brand"><span>Mobile view</span></div>
+    <span style="width:30px"></span>
+  </div>
+  <div class="pad">
+    <p class="help">The browser window is resized to the device size for a moment, captured, then put back. (Page width and layout change like on the device; it is not a full phone emulation.)</p>
+    <div id="devList" class="devs"></div>
+    <div class="line" id="customRow">
+      <span class="lbl">Custom size</span>
+      <input type="number" id="devW" min="240" max="3840" class="num"> <span class="x">×</span> <input type="number" id="devH" min="240" max="2160" class="num">
+    </div>
+    <label class="tog"><input type="checkbox" id="mobileFull"><i></i><span>Full page (scroll the whole page)</span></label>
+    <button id="mobileGo" class="primary">Capture</button>
+  </div>
+</div>
+
+<!-- split view chooser -->
+<div id="split" hidden>
+  <div class="top">
+    <button id="splitBack" class="icon" title="Back"><svg class="i" style="transform:rotate(90deg)"><use href="#i-chev"/></svg></button>
+    <div class="brand"><span>Split view</span></div>
+    <span style="width:30px"></span>
+  </div>
+  <div class="pad">
+    <p class="help" id="srcHelp">Tick 2–6 tabs from any window. Each one is shown for a moment and captured, then your current tab comes back.</p>
+    <div id="tabList" class="tablist"></div>
+    <div class="line">
+      <span class="lbl">Layout</span>
+      <div class="seg" id="laySeg"><button data-l="auto">Auto</button><button data-l="side">Side by side</button><button data-l="stack">Stacked</button><button data-l="grid">Grid</button></div>
+    </div>
+    <label class="tog"><input type="checkbox" id="splitFull"><i></i><span>Full page in every pane</span></label>
+    <button id="splitGo" class="primary">Capture split view</button>
+  </div>
+</div>
+
+<script type="module" src="popup.js"></script>
+</body>
+</html>

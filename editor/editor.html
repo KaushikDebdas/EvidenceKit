@@ -1,0 +1,308 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../icons/icon16.png">
+<title>EvidenceKit — Editor</title>
+<link rel="stylesheet" href="editor.css">
+</head>
+<body class="side-hidden light">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 12h8"/></symbol>
+<symbol id="i-page" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+<symbol id="i-guide" viewBox="0 0 24 24"><path d="M14 4.1 12 6M5.1 8l-2.9-.8M6 12l-1.9 2M7.2 2.2 8 5.1"/><path d="M9 9.7a.5.5 0 0 1 .7-.7l11 4.5a.5.5 0 0 1-.1.9l-4.3 1a1 1 0 0 0-.8.8l-1 4.3a.5.5 0 0 1-.9.1z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6M12 19h8"/></symbol>
+<symbol id="i-select" viewBox="0 0 24 24"><path d="M4 4.7a.5.5 0 0 1 .7-.7l16 6.5a.5.5 0 0 1-.1.9l-6.1 1.6a2 2 0 0 0-1.4 1.4l-1.6 6.1a.5.5 0 0 1-.9.1z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 7h10v10M7 17 17 7"/></symbol>
+<symbol id="i-line" viewBox="0 0 24 24"><path d="M5 19 19 5"/></symbol>
+<symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol>
+<symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M21.2 6.8a1 1 0 0 0-4-4L3.8 16.2a2 2 0 0 0-.5.8L2 21.4a.5.5 0 0 0 .6.6l4.4-1.3a2 2 0 0 0 .8-.5z"/><path d="m15 5 4 4"/></symbol>
+<symbol id="i-highlight" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></symbol>
+<symbol id="i-type" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+<symbol id="i-badge" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 9.5 2-1.5v8"/></symbol>
+<symbol id="i-blur" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+<symbol id="i-redact" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="1.5" fill="currentColor"/></symbol>
+<symbol id="i-crop" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 19V5"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m19 12-7 7-7-7M12 5v14"/></symbol>
+<symbol id="i-dup" viewBox="0 0 24 24"><rect width="13" height="13" x="9" y="9" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+<symbol id="i-panel" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></symbol>
+<symbol id="i-element" viewBox="0 0 24 24"><rect x="3" y="3" width="14" height="14" rx="2" stroke-dasharray="3 3"/><path d="M13 13l7.5 2.6-3.2 1.3-1.3 3.2z"/></symbol>
+<symbol id="i-dual" viewBox="0 0 24 24"><rect x="2" y="5" width="9" height="14" rx="1.5"/><rect x="13" y="5" width="9" height="14" rx="1.5"/></symbol>
+<symbol id="i-split" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+<symbol id="i-spot" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" fill-opacity=".25"/><rect x="7" y="7" width="10" height="10" rx="1.5" fill="var(--bg-solid,#fff)"/></symbol>
+<symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
+<symbol id="i-stamp" viewBox="0 0 24 24"><path d="M5 22h14M19.3 14.3A2.4 2.4 0 0 0 17.6 14H6.4a2.4 2.4 0 0 0-2.4 2.4V18h16v-1.6c0-.6-.3-1.3-.7-1.7zM9 14V8.5a3 3 0 1 1 6 0V14"/></symbol>
+<symbol id="i-eraser" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21M22 21H7M5 11l9 9"/></symbol>
+<symbol id="i-pipette" viewBox="0 0 24 24"><path d="m2 22 1-1h3l9-9M3 21v-3l9-9M15 6l3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3z"/></symbol>
+<symbol id="i-frame" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+<symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M10 13h4M7 16h10"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><circle cx="12" cy="10" r="7"/><circle cx="12" cy="10" r="3"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4v16l14-8z"/></symbol>
+<symbol id="i-tab" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20M8 4v5"/></symbol>
+<symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M7 5.5h.01M10 5.5h.01"/></symbol>
+<symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor"/></symbol>
+<symbol id="i-hlbox" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor" fill-opacity=".3"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+<symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+<symbol id="i-scrollbox" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M17 7v10M15.5 9 17 7l1.5 2M15.5 15l1.5 2 1.5-2M6 8h7M6 12h7M6 16h7"/></symbol>
+<symbol id="i-mobile" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+<symbol id="i-gif" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M9.5 10H8a1.5 1.5 0 0 0-1.5 1.5v1A1.5 1.5 0 0 0 8 14h1.5v-2H8.5M12 10v4M15 14v-4h2.5M15 12h2"/></symbol>
+<symbol id="i-clipboard" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></symbol>
+</svg>
+
+<header id="topbar">
+  <div class="left">
+    <img class="appicon" src="../icons/icon48.png" alt="" width="48" height="48">
+    <div class="fname">
+      <input id="fileName" spellcheck="false" title="File name used when you save">
+      <span id="fileExt">.png</span>
+    </div>
+  </div>
+  <div class="center">
+    <button id="undo" class="tb" title="Undo (Ctrl+Z)"><svg class="i"><use href="#i-undo"/></svg><span>Undo</span></button>
+    <button id="redo" class="tb" title="Redo (Ctrl+Y)"><svg class="i"><use href="#i-redo"/></svg><span>Redo</span></button>
+    <span id="histInfo" class="hist"></span>
+  </div>
+  <div class="right">
+    <button id="themeBtn" class="tb ico" title="Light / dark theme"><svg class="i"><use href="#i-moon"/></svg></button>
+    <button id="helpBtn" class="tb ico" title="Keyboard shortcuts (?)"><svg class="i"><use href="#i-keyboard"/></svg></button>
+    <span class="vsep"></span>
+    <button id="addManual" class="tb" title="Add this image as the next step of the User Manual (press both buttons to add it to both)"><svg class="i"><use href="#i-book"/></svg><span>Add to Manual</span></button>
+    <button id="addEvidence" class="tb" title="Add this image as the next step of the Test Evidence (press both buttons to add it to both)"><svg class="i"><use href="#i-clipboard"/></svg><span>Add to Test Evidence</span></button>
+    <button id="saveStep" class="tb accent" style="display:none"><svg class="i"><use href="#i-check"/></svg><span>Save to step</span></button>
+    <button id="copy" class="tb" title="Copy image to clipboard (Ctrl+Shift+C)"><svg class="i"><use href="#i-copy"/></svg><span>Copy</span></button>
+    <div class="split">
+      <button id="save" class="tb primary" title="Save (Ctrl+S)"><svg class="i"><use href="#i-download"/></svg><span>Save</span></button>
+      <button id="saveMenuBtn" class="tb primary caret" title="More save options"><svg class="i"><use href="#i-chev"/></svg></button>
+      <div id="saveMenu" class="menu">
+        <button data-fmt="png"><b>PNG</b><small>Best quality</small></button>
+        <button data-fmt="jpg"><b>JPG</b><small>Smaller file</small></button>
+        <button data-fmt="webp"><b>WebP</b><small>Smallest file</small></button>
+        <button data-fmt="pdf"><b>PDF</b><small>For reports</small></button>
+        <hr>
+        <button data-fmt="copysave"><b>Copy + save</b><small>Clipboard and file</small></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="toolbar">
+  <nav id="tools">
+    <button class="tool" data-tool="select" data-key="V" title="Select / move (V)"><svg class="i"><use href="#i-select"/></svg><span>Select</span></button>
+    <i class="rsep"></i>
+    <button class="tool" data-tool="arrow" data-key="A" title="Arrow (A)"><svg class="i"><use href="#i-arrow"/></svg><span>Arrow</span></button>
+    <button class="tool active" data-tool="rect" data-key="R" title="Box (R)"><svg class="i"><use href="#i-square"/></svg><span>Box</span></button>
+    <button class="tool" data-tool="ellipse" data-key="O" title="Oval (O)"><svg class="i"><use href="#i-circle"/></svg><span>Oval</span></button>
+    <button class="tool" data-tool="line" data-key="L" title="Line (L)"><svg class="i"><use href="#i-line"/></svg><span>Line</span></button>
+    <button class="tool" data-tool="pen" data-key="P" title="Pen (P)"><svg class="i"><use href="#i-pen"/></svg><span>Pen</span></button>
+    <i class="rsep"></i>
+    <button class="tool" data-tool="text" data-key="T" title="Text (T)"><svg class="i"><use href="#i-type"/></svg><span>Text</span></button>
+    <button class="tool" data-tool="badge" data-key="N" title="Step number (N)"><svg class="i"><use href="#i-badge"/></svg><span>Step #</span></button>
+    <button class="tool" data-tool="stamp" data-key="S" title="QA stamp: PASS / FAIL / BUG (S)"><svg class="i"><use href="#i-stamp"/></svg><span>Stamp</span></button>
+    <i class="rsep"></i>
+    <button class="tool" data-tool="hlbox" data-key="H" title="Highlight box (H)"><svg class="i"><use href="#i-hlbox"/></svg><span>Highlight</span></button>
+    <button class="tool" data-tool="highlight" data-key="M" title="Marker pen (M)"><svg class="i"><use href="#i-highlight"/></svg><span>Marker</span></button>
+    <button class="tool" data-tool="spotlight" data-key="F" title="Spotlight: dim everything else (F)"><svg class="i"><use href="#i-spot"/></svg><span>Spotlight</span></button>
+    <button class="tool" data-tool="magnify" data-key="Z" title="Magnifier (Z)"><svg class="i"><use href="#i-zoom"/></svg><span>Magnify</span></button>
+    <i class="rsep"></i>
+    <button class="tool" data-tool="blur" data-key="B" title="Blur / pixelate (B)"><svg class="i"><use href="#i-blur"/></svg><span>Blur</span></button>
+    <button class="tool" data-tool="redact" data-key="X" title="Redact (X)"><svg class="i"><use href="#i-redact"/></svg><span>Redact</span></button>
+    <button class="tool" data-tool="eraser" data-key="E" title="Eraser: click an item to remove it (E)"><svg class="i"><use href="#i-eraser"/></svg><span>Eraser</span></button>
+    <button class="tool" data-tool="crop" data-key="C" title="Crop (C)"><svg class="i"><use href="#i-crop"/></svg><span>Crop</span></button>
+  </nav>
+  <div class="panes" id="paneBtns">
+    <button data-pane="stamp" title="URL, date / time bar and log panels"><svg class="i"><use href="#i-page"/></svg><span>URL &amp; Time</span></button>
+    <button data-pane="frame" title="Background frame"><svg class="i"><use href="#i-frame"/></svg><span>Frame</span></button>
+    <button data-pane="info" title="Capture details"><svg class="i"><use href="#i-help"/></svg><span>Info</span></button>
+    <button data-pane="logs" title="Console and network logs"><svg class="i"><use href="#i-terminal"/></svg><span>Logs</span></button>
+  </div>
+</div>
+
+<div id="props">
+  <span class="grp" id="gColor">
+    <span class="sw" data-c="#ef4444" style="background:#ef4444"></span>
+    <span class="sw" data-c="#f97316" style="background:#f97316"></span>
+    <span class="sw" data-c="#facc15" style="background:#facc15"></span>
+    <span class="sw" data-c="#22c55e" style="background:#22c55e"></span>
+    <span class="sw" data-c="#3b82f6" style="background:#3b82f6"></span>
+    <span class="sw" data-c="#a855f7" style="background:#a855f7"></span>
+    <span class="sw" data-c="#111827" style="background:#111827"></span>
+    <span class="sw" data-c="#ffffff" style="background:#ffffff"></span>
+    <label class="cpick" title="Custom color"><input type="color" id="pColor" value="#ef4444"></label>
+    <button id="pEye" class="pb ico" title="Pick a color from the image"><svg class="i"><use href="#i-pipette"/></svg></button>
+  </span>
+  <span class="grp" id="gWidth"><label>Size <input type="range" id="pWidth" min="1" max="24" value="4"><output id="pWidthV">4</output></label></span>
+  <span class="grp" id="gDash"><label class="ck"><input type="checkbox" id="pDash"> Dashed</label></span>
+  <span class="grp" id="gFill"><label class="ck"><input type="checkbox" id="pFill"> Fill</label></span>
+  <span class="grp" id="gText">
+    <label>Font <input type="number" id="pFont" value="28" min="8" max="300"></label>
+    <label class="ck"><input type="checkbox" id="pBold"> Bold</label>
+    <label>Style <select id="pTextStyle">
+      <option value="plain">Plain</option><option value="box">White box</option><option value="label">Color label</option><option value="outline">Outline</option>
+    </select></label>
+  </span>
+  <span class="grp" id="gBadge">
+    <label>Next # <input type="number" id="pBadgeNext" value="1" min="0"></label>
+    <label>Size <input type="number" id="pBadgeSize" value="18" min="8" max="80"></label>
+    <button id="pRenum" class="pb" title="Renumber the badges 1, 2, 3 … in their current order. Double-click a badge to type its number.">↻ Renumber</button>
+  </span>
+  <span class="grp" id="gStamp">
+    <span id="stampBtns" class="stampset"></span>
+    <label id="stampTextLbl">Text <input id="pStampText" maxlength="24" placeholder="RETEST" spellcheck="false"></label>
+    <label>Size <input type="range" id="pStampSize" min="12" max="120" value="32"><output id="pStampSizeV">32</output></label>
+    <button id="pStampReset" class="pb ico" title="Use the stamp's own color again">↺</button>
+  </span>
+  <span class="grp" id="gSpot"><label>Dim <input type="range" id="pDim" min="20" max="90" value="60"></label></span>
+  <span class="grp" id="gMag"><label>Zoom <select id="pMag"><option value="2">2×</option><option value="3">3×</option><option value="4">4×</option></select></label></span>
+  <span class="grp" id="gOpacity"><label>Opacity <input type="range" id="pOpacity" min="10" max="100" value="100"></label></span>
+  <span class="grp" id="gSel">
+    <button id="pDup" class="pb" title="Duplicate (Ctrl+D)"><svg class="i"><use href="#i-dup"/></svg>Duplicate</button>
+    <button id="pFront" class="pb" title="Bring to front"><svg class="i"><use href="#i-up"/></svg>Front</button>
+    <button id="pBack" class="pb" title="Send to back"><svg class="i"><use href="#i-down"/></svg>Back</button>
+    <button id="pDel" class="pb danger" title="Delete (Del)"><svg class="i"><use href="#i-trash"/></svg>Delete</button>
+  </span>
+  <span class="grp" id="gCrop">
+    <button id="cropApply" class="pb primary"><svg class="i"><use href="#i-check"/></svg>Apply crop</button>
+    <button id="cropCancel" class="pb"><svg class="i"><use href="#i-x"/></svg>Cancel</button>
+  </span>
+  <span id="hint" class="hint"></span>
+</div>
+
+<div id="main">
+
+  <div id="stage">
+    <div id="frameWrap"><canvas id="c"></canvas></div>
+    <div id="drop" hidden>
+      <div class="dropbox">
+        <svg class="i big"><use href="#i-image"/></svg>
+        <h2>Open an image to annotate</h2>
+        <p>Drop an image here, paste it with <kbd>Ctrl</kbd>+<kbd>V</kbd>, or</p>
+        <label class="tb primary">Choose file<input type="file" id="pickFile" accept="image/*" hidden></label>
+      </div>
+    </div>
+  </div>
+  <div id="zoomBox">
+    <button id="zoomOut" title="Zoom out (Ctrl −)"><svg class="i"><use href="#i-minus"/></svg></button>
+    <button id="zoomLabel" title="Actual size (Ctrl+1)">100%</button>
+    <button id="zoomIn" title="Zoom in (Ctrl +)"><svg class="i"><use href="#i-plus"/></svg></button>
+    <button id="zoomFit" title="Fit to window (Ctrl+0)">Fit</button>
+    <span id="dims"></span>
+  </div>
+
+  <aside id="side">
+    <div class="sh">
+      <div class="tabs" id="sideTabs">
+        <button data-pane="stamp" class="active">URL &amp; Time</button>
+        <button data-pane="frame">Frame</button>
+        <button data-pane="info">Info</button>
+        <button data-pane="logs">Logs</button>
+      </div>
+      <button id="closeSide" class="tb ico" title="Close"><svg class="i"><use href="#i-x"/></svg></button>
+    </div>
+
+    <section class="pane" data-pane="stamp">
+      <p class="note">A browser-style bar with the page URL and real time.</p>
+      <label class="tog"><input type="checkbox" id="tUrl"><i></i>Page URL</label>
+      <label class="tog"><input type="checkbox" id="tDate"><i></i>Date</label>
+      <label class="tog"><input type="checkbox" id="tTime"><i></i>Time</label>
+      <div class="three">
+        <label>Position <select id="tPos"><option value="top">Top</option><option value="bottom">Bottom</option></select></label>
+        <label>Style <select id="tStyle"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+        <label>Clock <select id="tFmt"><option value="12">12h AM/PM</option><option value="24">24h</option></select></label>
+      </div>
+      <label class="inl">Date format <select id="tDateFmt">
+        <option value="YYYY-MM-DD">2026-11-20</option><option value="DD-MM-YYYY">20-11-2026</option><option value="DD/MM/YYYY">20/11/2026</option>
+        <option value="MM/DD/YYYY">11/20/2026</option><option value="DD MMM YYYY">20 Nov 2026</option><option value="MMM D, YYYY">Nov 20, 2026</option>
+        <option value="custom">Custom…</option></select></label>
+      <label class="inl" id="tCustomRow" hidden>Pattern <input id="tDateCustom" placeholder="DD/MM/YYYY" spellcheck="false"></label>
+      <label class="inl">Bar size <select id="tSize"><option value="s">Small</option><option value="m">Medium</option><option value="l">Large</option><option value="xl">Extra large</option></select></label>
+      <h3>Log panels under the image</h3>
+      <label class="tog"><input type="checkbox" id="tConsole"><i></i>Console</label>
+      <label class="tog"><input type="checkbox" id="tNetwork"><i></i>Network</label>
+      <label class="tog"><input type="checkbox" id="tErrors"><i></i>Errors / failed only</label>
+      <label class="inl">Max lines <input type="number" id="tLines" value="20" min="3" max="80"></label>
+      <div id="lockNote" class="note warn" style="display:none"></div>
+    </section>
+
+    <section class="pane" data-pane="frame" hidden>
+      <p class="note">Put the screenshot on a background — nice for reports and slides. Applied when you save or copy.</p>
+      <label class="tog"><input type="checkbox" id="fOn"><i></i>Use frame</label>
+      <h3>Background</h3>
+      <div id="fBgs" class="bgs"></div>
+      <label class="inl">Padding <input type="range" id="fPad" min="0" max="200" value="64"><output id="fPadV"></output></label>
+      <label class="inl">Corners <input type="range" id="fRad" min="0" max="40" value="12"><output id="fRadV"></output></label>
+      <label class="tog"><input type="checkbox" id="fShadow" checked><i></i>Shadow</label>
+    </section>
+
+    <section class="pane" data-pane="info" hidden>
+      <div id="info" class="info"></div>
+    </section>
+
+    <section class="pane" data-pane="logs" hidden>
+      <div id="noLogs" class="note"></div>
+      <div id="logsBox" style="display:none">
+        <div class="tabs small"><button id="tabConsole" class="active">Console</button><button id="tabNetwork">Network</button></div>
+        <input id="logFilter" placeholder="Filter…">
+        <div id="logList" class="loglist"></div>
+        <div class="row">
+          <button id="expConsole">Console .txt</button>
+          <button id="expNet">Network .txt</button>
+          <button id="expHar">.har</button>
+          <button id="expJson">All .json</button>
+        </div>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<div id="help" class="modal" hidden>
+  <div class="mbox">
+    <div class="sh"><b>Keyboard shortcuts</b><button id="helpClose" class="tb ico"><svg class="i"><use href="#i-x"/></svg></button></div>
+    <div class="keys">
+      <div><kbd>V</kbd> Select</div><div><kbd>A</kbd> Arrow</div><div><kbd>R</kbd> Box</div><div><kbd>O</kbd> Oval</div>
+      <div><kbd>L</kbd> Line</div><div><kbd>P</kbd> Pen</div><div><kbd>T</kbd> Text</div><div><kbd>N</kbd> Step number</div>
+      <div><kbd>S</kbd> Stamp</div><div><kbd>H</kbd> Highlight box</div><div><kbd>M</kbd> Marker</div><div><kbd>F</kbd> Spotlight</div>
+      <div><kbd>Z</kbd> Magnifier</div><div><kbd>B</kbd> Blur</div><div><kbd>X</kbd> Redact</div><div><kbd>E</kbd> Eraser</div>
+      <div><kbd>C</kbd> Crop</div><div><kbd>Esc</kbd> Back to select</div>
+      <div><kbd>Ctrl</kbd>+<kbd>Z</kbd> Undo</div><div><kbd>Ctrl</kbd>+<kbd>Y</kbd> Redo</div>
+      <div><kbd>Ctrl</kbd>+<kbd>S</kbd> Save</div><div><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> Copy image</div>
+      <div><kbd>Ctrl</kbd>+<kbd>D</kbd> Duplicate</div><div><kbd>Del</kbd> Delete</div>
+      <div><kbd>Arrows</kbd> Nudge (Shift = 10px)</div><div><kbd>Ctrl</kbd>+<kbd>V</kbd> Paste image</div>
+      <div><kbd>Ctrl</kbd>+<kbd>+</kbd>/<kbd>−</kbd> Zoom</div><div><kbd>Ctrl</kbd>+<kbd>0</kbd> Fit</div>
+      <div><kbd>Ctrl</kbd>+wheel Zoom</div><div><kbd>Space</kbd>+drag Pan</div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<div id="okbar" role="status"><span class="okc">✓</span><div><div class="okt"></div><div class="okd"></div></div><button id="okManual" style="display:none">Open User Manual</button><button class="okx" id="okClose" title="Close">✕</button></div>
+
+<script src="../lib/fabric.min.js"></script>
+<script type="module" src="editor.js"></script>
+</body>
+</html>
