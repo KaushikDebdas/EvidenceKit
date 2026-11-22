@@ -530,30 +530,68 @@ function grabFrame(maxW = 1920) {
 const canvasBlob = (c) => new Promise((r) => c.toBlob(r, 'image/png'));
 const mkCanvas = (w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h });
 
-// picture of this moment: URL / date / time bar (like screenshots), click marker when its place is known
+// Where the step's web page is inside this frame (in frame pixels), or null when that is not known.
+// g = the page's position and size on the screen, sent by the page (content/guide.js) or the background.
+// g.winOnly: only the browser window is known (a page the extension may not enter, e.g. the PDF viewer):
+// the picture is cut to that window, with Chrome's own address bar in it.
+function pageRect(c, g) {
+  if (!g) return null;
+  const win = !!g.winOnly;
+  if (win ? !g.ow || !g.oh : !g.iw || !g.ih) return null;
+  const px = win ? g.wx : g.ox, py = win ? g.wy : g.oy, pw = win ? g.ow : g.iw, ph = win ? g.oh : g.ih;
+  let sc, x, y;
+  if (surface === 'monitor' && g.sw && Math.abs(c.width / c.height - g.sw / g.sh) < 0.02) {
+    sc = c.width / g.sw; x = (px - g.sl) * sc; y = (py - g.st) * sc; // whole screen: the screen this page is on
+  } else if (surface === 'window' && g.ow && Math.abs(c.width / c.height - g.ow / g.oh) < 0.03) {
+    if (win) return null; // the recording is that window already
+    sc = c.width / g.ow; x = (px - g.wx) * sc; y = (py - g.wy) * sc; // one window: the browser window of this page
+  } else return null; // another screen or another program's window
+  const r = { x: Math.max(0, Math.round(x)), y: Math.max(0, Math.round(y)), winOnly: win };
+  r.w = Math.min(c.width - r.x, Math.round(pw * sc + Math.min(0, x)));
+  r.h = Math.min(c.height - r.y, Math.round(ph * sc + Math.min(0, y)));
+  return r.w > 80 && r.h > 60 ? r : null;
+}
+function scaled(c, rect, maxW = 1920) {
+  const r = rect || { x: 0, y: 0, w: c.width, h: c.height };
+  const k = Math.min(1, maxW / r.w);
+  const out = mkCanvas(Math.round(r.w * k), Math.round(r.h * k));
+  out.getContext('2d').drawImage(c, r.x, r.y, r.w, r.h, 0, 0, out.width, out.height);
+  return out;
+}
+
+// Picture of this moment, from the screen video.
+// "Only the web page" (default): a step in a Chrome tab is cut to that page, so the taskbar, other windows and
+// Chrome's own address bar are left out, and it gets the URL / date / time bar like a screenshot.
+// Otherwise (or for another program) the whole frame is kept, with the date / time only: the browser's own
+// address bar is already in the picture.
 async function framePicture(st) {
-  const c = grabFrame();
-  if (!c) return null;
+  const full = grabFrame(Infinity);
+  if (!full) return null;
+  const rect = $('recStepCrop').checked ? pageRect(full, st.geo) : null;
+  const c = scaled(full, rect);
   let base = await canvasBlob(c);
   let headerH = 0;
   const o = { ...composeOpts(settings), console: false, network: false };
-  if (!st.url) o.url = false;
+  if (!st.url || !rect || rect.winOnly) o.url = false; // the browser's own address bar is in the picture
   if (o.url || o.time) {
     const bmp = await createImageBitmap(base);
     const r = compose(bmp, { url: st.url || '', ts: st.ts, title: st.pageTitle || '' }, o, mkCanvas);
     headerH = r.headerH;
     base = await canvasBlob(r.canvas);
   }
-  // the click / field outline: only on a whole-screen recording of the screen this page is on
+  // the click / field outline
   let mark = null;
   const g = st.geo;
-  if (surface === 'monitor' && g && g.sw && (st.rect || st.pt) && Math.abs(c.width / c.height - g.sw / g.sh) < 0.02) {
+  const color = settings.guideColor || '#ef4444';
+  if (rect && !rect.winOnly && g && (st.rect || st.pt)) {
+    mark = markOf({ rect: st.rect, pt: st.pt, vw: g.iw }, color, headerH); // page coordinates, like a tab screenshot
+  } else if (!rect && surface === 'monitor' && g && g.sw && (st.rect || st.pt) && Math.abs(full.width / full.height - g.sw / g.sh) < 0.02) {
     const mx = g.ox - g.sl, my = g.oy - g.st; // where the page is on this screen (CSS pixels)
     mark = markOf({
       rect: st.rect ? { x: st.rect.x + mx, y: st.rect.y + my, w: st.rect.w, h: st.rect.h } : null,
       pt: st.pt ? { x: st.pt.x + mx, y: st.pt.y + my } : null,
       vw: g.sw,
-    }, settings.guideColor || '#ef4444', headerH);
+    }, color, headerH);
   }
   const blob = mark ? await bakeMarker(base, mark, st.n) : base;
   const id = 'rs-' + uid();
@@ -888,10 +926,21 @@ async function init() {
   $('clicks').checked = settings.recClicks !== false;
   $('autoSave').checked = settings.recAutoSave !== false;
   $('clicks').disabled = srcTabId == null;
-  cards('srcCards', source, (v) => { source = v; });
+  const srcNote = () => {
+    const n = $('srcNote');
+    n.hidden = source === 'browser';
+    n.innerHTML = source === 'monitor'
+      ? '<b>Everything on this screen is recorded</b> — other windows, notifications, the taskbar and the floating controls too. '
+        + 'Only need the browser? Choose <b>Browser tab</b>, or <b>App window</b> and pick the Chrome window. '
+        + 'Chrome also shows a small “sharing this screen” bar: press <b>Hide</b> on it.'
+      : 'Only the window you pick is recorded. Pick the <b>Chrome window</b> to get steps from all its tabs.';
+  };
+  cards('srcCards', source, (v) => { source = v; srcNote(); });
+  srcNote();
   $('recSteps').checked = settings.recSteps !== false;
   $('recStepShots').checked = settings.recStepShots !== false;
   $('recStepValues').checked = !!settings.recStepValues;
+  $('recStepCrop').checked = settings.recStepCrop !== false;
   const stepsAvail = srcTabId != null;
   $('recSteps').disabled = !stepsAvail;
   $('stepsOpt').classList.toggle('off', !stepsAvail);
@@ -911,9 +960,9 @@ async function init() {
     recCountdownSec: +$('countdown').value, recCountdown: +$('countdown').value > 0,
     recSys: $('sysAudio').checked, recMic: $('mic').checked, recCamera: $('cam').checked,
     recClicks: $('clicks').checked, recAutoSave: $('autoSave').checked,
-    recSteps: $('recSteps').checked, recStepShots: $('recStepShots').checked, recStepValues: $('recStepValues').checked,
+    recSteps: $('recSteps').checked, recStepShots: $('recStepShots').checked, recStepValues: $('recStepValues').checked, recStepCrop: $('recStepCrop').checked,
   });
-  ['quality', 'fps', 'fmt', 'countdown', 'sysAudio', 'clicks', 'autoSave', 'recSteps', 'recStepShots', 'recStepValues'].forEach((id) => $(id).addEventListener('change', persist));
+  ['quality', 'fps', 'fmt', 'countdown', 'sysAudio', 'clicks', 'autoSave', 'recSteps', 'recStepShots', 'recStepValues', 'recStepCrop'].forEach((id) => $(id).addEventListener('change', persist));
   $('mic').addEventListener('change', () => { persist(); if ($('mic').checked) startMic(); else { stopMic(); $('micBox').hidden = true; } });
   $('cam').addEventListener('change', () => { persist(); if ($('cam').checked) startCam(); else { stopCam(); $('camBox').hidden = true; } });
   $('micDev').addEventListener('change', startMic);

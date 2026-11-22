@@ -78,9 +78,11 @@
   function geo() {
     const bw = Math.max(0, (outerWidth - innerWidth) / 2);
     return {
-      ox: offX != null ? offX : screenX + bw,
+      ox: offX != null ? offX : screenX + bw, // top-left of the web page on the screen
       oy: offY != null ? offY : screenY + Math.max(0, outerHeight - innerHeight - bw),
-      sl: screen.availLeft || 0, st: screen.availTop || 0, sw: screen.width, sh: screen.height,
+      iw: innerWidth, ih: innerHeight, // size of the web page
+      wx: screenX, wy: screenY, ow: outerWidth, oh: outerHeight, // the browser window
+      sl: screen.availLeft || 0, st: screen.availTop || 0, sw: screen.width, sh: screen.height, // this screen
     };
   }
 

@@ -1025,6 +1025,7 @@ async function onRecStep(tab, msg) {
   const n = rec.n;
   const step = { n, ts: msg.ts || Date.now(), kind: msg.kind || 'click', title: msg.title || '', url: msg.url || tab.url || '', pageTitle: msg.pageTitle || '', img: null };
   if (rec.screen) {
+    learnGeo(tab.windowId, msg.geo);
     // the recorder takes this step's picture from the screen video itself (what you really see, any program)
     Object.assign(step, { frame: true, rect: msg.rect || null, pt: msg.pt || null, vw: msg.vw || null, geo: msg.geo || null });
     chrome.runtime.sendMessage({ target: 'recorder', type: 'recStepAdded', step }).catch(() => {});
@@ -1053,10 +1054,44 @@ async function recEvent(kind, title, extra = {}, delay = 700) {
   if (!rec.active || rec.paused || !rec.screen) return;
   rec.n++;
   saveRec();
-  const step = { n: rec.n, ts: extra.ts || Date.now(), kind, title, url: extra.url || '', pageTitle: extra.pageTitle || '', img: null, frame: true };
+  const step = { n: rec.n, ts: extra.ts || Date.now(), kind, title, url: extra.url || '', pageTitle: extra.pageTitle || '', img: null, frame: true, geo: extra.geo || null };
   setTimeout(() => chrome.runtime.sendMessage({ target: 'recorder', type: 'recStepAdded', step }).catch(() => {}), delay); // let the screen show it first
 }
 const tabTitle = (t) => clip(t.title || t.url || 'a tab', 80);
+// Where a tab's web page is on the screen, so the recorder can cut the step picture to just that page.
+// Read inside the page when possible. Pages no extension may enter (Chrome's PDF viewer, the New Tab page,
+// a tab still loading …) use the browser window's place on the screen instead, plus what was learnt from
+// another tab of the same window: where the page starts inside the window (below the tab strip and toolbar).
+// Without that, the recorder cuts the picture to the whole browser window (still no taskbar or other programs).
+function learnGeo(windowId, g) {
+  if (!g || !g.iw || !g.sw) return;
+  rec.geoScreen = { sl: g.sl, st: g.st, sw: g.sw, sh: g.sh };
+  if (windowId != null) rec.insets = { ...(rec.insets || {}), [windowId]: { l: g.ox - g.wx, t: g.oy - g.wy, dw: g.ow - g.iw, dh: g.oh - g.ih } };
+  saveRec();
+}
+async function pageGeo(tab) {
+  if (!tab) return null;
+  try {
+    const g = await exec(tab.id, () => {
+      const bw = Math.max(0, (outerWidth - innerWidth) / 2);
+      return {
+        ox: screenX + bw, oy: screenY + Math.max(0, outerHeight - innerHeight - bw), iw: innerWidth, ih: innerHeight,
+        wx: screenX, wy: screenY, ow: outerWidth, oh: outerHeight,
+        sl: screen.availLeft || 0, st: screen.availTop || 0, sw: screen.width, sh: screen.height,
+      };
+    });
+    if (g && g.iw) { learnGeo(tab.windowId, g); return g; }
+  } catch (e) {}
+  await recReady;
+  const w = await chrome.windows.get(tab.windowId).catch(() => null);
+  if (!w || !rec.geoScreen) return null;
+  const g = { wx: w.left, wy: w.top, ow: w.width, oh: w.height, ...rec.geoScreen };
+  const ins = (rec.insets || {})[tab.windowId];
+  if (ins && w.width - ins.dw > 100 && w.height - ins.dh > 100) {
+    Object.assign(g, { ox: w.left + ins.l, oy: w.top + ins.t, iw: w.width - ins.dw, ih: w.height - ins.dh });
+  } else g.winOnly = true; // only the browser window is known
+  return g;
+}
 const clip = (s, n) => (String(s).length > n ? String(s).slice(0, n - 1) + '…' : String(s));
 const newTabs = new Set(); // tabs opened during a screen recording ("Open a new tab …")
 chrome.tabs.onCreated.addListener((t) => { if (rec.active && rec.screen) newTabs.add(t.id); });
@@ -1069,7 +1104,7 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
   await sleep(opened ? 1500 : 300);
   const t = await chrome.tabs.get(tabId).catch(() => null);
   if (!t) return;
-  recEvent('tab', `${opened ? 'Open a new tab' : 'Switch to the tab'} “${tabTitle(t)}”`, { url: t.pendingUrl || t.url, pageTitle: t.title, ts: at }, opened ? 200 : 400);
+  recEvent('tab', `${opened ? 'Open a new tab' : 'Switch to the tab'} “${tabTitle(t)}”`, { url: t.pendingUrl || t.url, pageTitle: t.title, ts: at, geo: await pageGeo(t) }, opened ? 200 : 400);
   followRecTab(t);
 });
 chrome.windows.onFocusChanged.addListener(async (winId) => {
@@ -1089,7 +1124,7 @@ chrome.windows.onFocusChanged.addListener(async (winId) => {
   saveRec();
   chrome.runtime.sendMessage({ target: 'recorder', type: 'recOutside', outside: false }).catch(() => {});
   const t = (w.tabs || []).find((x) => x.active);
-  recEvent('app', `Back to Chrome — “${t ? tabTitle(t) : 'Chrome'}”`, { url: t ? t.url : '', pageTitle: t ? t.title : '' });
+  recEvent('app', `Back to Chrome — “${t ? tabTitle(t) : 'Chrome'}”`, { url: t ? t.url : '', pageTitle: t ? t.title : '', geo: t ? await pageGeo(t) : null });
 });
 // clicks / typing / ripples in whichever tab is in front
 async function followRecTab(t) {
@@ -1310,12 +1345,12 @@ async function handle(msg, sender) {
     }
     case 'recStepsStart':
       await recReady;
-      rec = { active: true, tabId: msg.tabId, shots: msg.shots !== false, values: !!msg.values, paused: false, n: 0, screen: !!msg.screen, outside: false };
+      rec = { active: true, tabId: msg.tabId, shots: msg.shots !== false, values: !!msg.values, paused: false, n: 0, screen: !!msg.screen, outside: false, geoScreen: null, insets: {} };
       saveRec();
       await setRecOwner(sender);
       if (msg.tabId != null) await injectRecSteps(msg.tabId);
       if (rec.screen) { // screen / window: the tab in front of every window counts too
-        for (const t of await chrome.tabs.query({ active: true, windowType: 'normal' })) if (t.id !== msg.tabId) followRecTab(t);
+        for (const t of await chrome.tabs.query({ active: true, windowType: 'normal' })) { pageGeo(t); if (t.id !== msg.tabId) followRecTab(t); }
       }
       return { ok: true };
     case 'recStepsPause':
@@ -1360,4 +1395,4 @@ chrome.runtime.onMessage.addListener((msg, sender, send) => {
 });
 
 // Used by the local Playwright smoke test (service-worker console): self.__evk.doCapture('full')
-self.__evk = { doCapture, splitCapture, getSettings, rec: () => rec };
+self.__evk = { doCapture, splitCapture, getSettings, rec: () => rec, pageGeo };

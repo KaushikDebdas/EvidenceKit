@@ -167,6 +167,8 @@ Popup → **Record screen**.
 <img src="media/ui-recorder.png" width="560" alt="The screen recorder">
 
 - **What to record**: a browser tab, an app window, or the entire screen.
+  - **Entire screen** records *everything* on that screen: other windows, notifications, the taskbar, the floating controls, and Chrome's small "sharing this screen" bar (press **Hide** on it). This is how screen sharing works; no extension can leave windows out of the video.
+  - If you only need the browser, choose **Browser tab**, or **App window** and pick the Chrome window. The recorder reminds you of this when you choose Entire screen.
 - **Format & quality**: MP4 or WebM · 720p, 1080p, 1440p or 4K · 30 or 60 fps.
 - **Audio**: tab / system sound and a microphone (with a level meter; mute while recording).
 - **Extras**: camera bubble, click ripples, countdown, pause / resume.
@@ -179,7 +181,14 @@ Tick **Repro steps** and every click and typed field becomes a step with its tim
 | You record… | Steps come from |
 |---|---|
 | **A tab** | Clicks and typing in the tab you started from. Step pictures come from that tab. |
-| **The entire screen or a window** | Clicks and typing in **any Chrome tab** · **opening or switching tabs** (e.g. a PDF report opening in a new tab) · **switching to another program** (Excel, Edge …) and back. Step pictures are taken **from the screen video**, so they show what was really on screen, other programs included. On an entire-screen recording, the click is outlined in the picture. |
+| **The entire screen or a window** | Clicks and typing in **any Chrome tab** · **opening or switching tabs** (e.g. a PDF report opening in a new tab) · **switching to another program** (Excel, Edge …) and back. Step pictures are taken **from the screen video**. |
+
+**Step pictures of a screen or window recording.** With **Step pictures show only the web page** (on by default):
+- a step in a Chrome tab is cut out to just that web page. The taskbar, other windows and Chrome's own address bar are left out, and the picture gets the URL & time bar, so it looks like a normal screenshot with the address shown once;
+- this also works for tabs no extension may enter, such as a **PDF report** in Chrome's PDF viewer or the New Tab page. Their page area is worked out from the browser window and from your clicks in other tabs of that window. If that is not known yet (no click in that window so far), the picture is cut to the whole browser window instead, with Chrome's own address bar and no second URL;
+- steps in other programs keep the whole screen, with the date and time.
+
+With the option off, every step picture is the whole screen with the date and time only. The browser's own address bar is already in the picture, so no second URL is added. The click is outlined in both cases (on an entire-screen recording).
 
 > [!NOTE]
 > A browser extension cannot see clicks *inside* other programs such as Excel or Edge; the operating system does not allow it. While another program is in front, a big change of the screen that then stays still becomes a step (*The screen changed*). You can also take a step yourself at any moment:
