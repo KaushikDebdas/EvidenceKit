@@ -1,131 +1,189 @@
-# EvidenceKit (v1.0.0)
+<div align="center">
 
-Works in Chrome, Microsoft Edge and Brave (tested on version 157), on any screen size. Install:
-1. Unzip this folder.
-2. Open `chrome://extensions`, turn on **Developer mode**.
-3. Click **Load unpacked** and select the `EvidenceKit` folder.
-4. Pin the extension icon.
+<img src="icons/icon128.png" width="96" alt="EvidenceKit icon">
 
-## Screenshots
-- **Visible**: what you see now.
-- **Full page**: scrolls and stitches the whole page (up to 16 000 px). On app-style pages where the page itself does not scroll (Outlook, OneDrive, Teams, Gmail …), it finds the main scrolling area (mail list, file list) and stretches it to its full length, with the header and sidebars in place. For another list on the same page, use **Scroll box**.
-- **Area**: drag a rectangle. The page is frozen first, so open dropdowns, tooltips and hover menus stay in the picture.
-- **Element**: hover a button, card or table and click it. Arrow Up/Down picks the parent/child element. Elements taller than the screen are captured in full.
-- **Dual select**: select two areas and get them in one image. You can scroll with the mouse wheel between the first and second area.
-- **Split view**: tick 2–6 tabs (from any window) and get them side by side in one image; your current tab, and the current tab of every other open window, are ticked for you. Each pane gets its own URL bar. The keyboard shortcut uses the current tab of each window (with one window: this tab and the one you used just before).
-- **Scroll box**: a list, table, chat or frame (also from another site) that scrolls up/down, sideways or both is scrolled and captured in full. Sticky header rows and frozen columns appear once, not in every piece.
-- **Mobile view**: the page at iPhone, Pixel, iPad, laptop or custom size. The browser window is resized for a moment and then put back, so there is no "debugging" bar. Layout changes like on the device, but it is not a full phone emulation. Below 500 px, Chrome cannot make its window that narrow, so the page opens in a small extra window for the capture.
-- **Screen / app**: a screenshot of the whole desktop or another program window.
-- **Open image**: annotate a picture from your computer or the clipboard.
-- **Last capture**: reopen the latest screenshot in the editor.
-- **Delay** (Off / 3 / 5 / 10 s) in the popup: open a menu while the countdown runs.
+# EvidenceKit
 
-Every screenshot can carry a browser-style bar with the page URL and the real date and/or time.
-- Choose **Date and time**, **Date only** or **Time only** (popup chips, Settings, or the editor).
-- **Date format**: 2026-11-20, 20-11-2026, 20/11/2026, 11/20/2026, 20 Nov 2026 (default), Nov 20, 2026, or a custom pattern.
-  - Tokens: `DD` 05, `D` 5, `MM` 11, `M` 11, `MMM` Nov, `MMMM` November, `YYYY` 2026, `YY` 26.
-  - Text inside `[ ]` is kept as it is, for example `[Date:] DD/MM/YYYY`.
-- 12-hour clock with AM/PM by default (24-hour available), for example `20 Nov 2026 03:04:05 PM`.
-- **Bar size**: Small, Medium, Large or Extra large.
-- Console / Network panels can be switched on in the popup before you capture.
+**The all-in-one evidence toolkit for QA engineers — right inside Chrome.**
 
-After capture you can: open the editor, save, save + edit, copy, copy + save, or add the image to the User Manual.
+Capture · Annotate · Record · Document
 
-## Editor
-All tools are in the bar at the top. The buttons on its right open the **URL & Time**, **Frame**, **Info** and **Logs** panels.
-- **Tools**: arrow, box, oval, line, pen, text (plain, white box, color label or outline), step numbers, QA stamps (PASS / FAIL / BUG / BLOCKED / FIXED / NOTE / ✓ / ✗ / ? / !), highlight box, marker, spotlight, magnifier, blur, redact, eraser and crop.
-- **Style options**: color swatches, eyedropper, size, dashed lines, fill and opacity.
-- **QA stamps**: you can change the size, color and text before or after placing a stamp. **Custom** takes your own text. Select a stamp and click another preset to swap it, or press ↺ to go back to its own color.
-- **Frame**: a gradient or solid background with padding, rounded corners and a shadow.
-- **Saving**: PNG, JPG, WebP or PDF, or copy + save, with an editable file name.
-- **Pasting**: paste or drop another image onto the screenshot.
-- **Theme**: light by default, dark from the moon button or Settings (also used by the popup and recorder). Press `?` to see every shortcut.
+![Manifest V3](https://img.shields.io/badge/Manifest-V3-4f46e5)
+![Chrome · Edge · Brave](https://img.shields.io/badge/Chrome%20%C2%B7%20Edge%20%C2%B7%20Brave-supported-0f766e)
+![100% local](https://img.shields.io/badge/your%20data-100%25%20local-16a34a)
+![No account](https://img.shields.io/badge/account-not%20needed-6b7280)
+![Version](https://img.shields.io/badge/version-1.0.0-111827)
 
-## Screen recorder
-- Record a browser tab, an app window or the entire screen, in MP4 or WebM at 720p / 1080p / 1440p / 4K and 30 / 60 fps.
-- **Audio**: tab or system sound, plus a microphone with a level meter. You can mute the mic while recording.
-- **Camera bubble and floating controls**: they stay on top of other windows, and the camera shows in window and screen recordings.
-- **During recording**: a countdown before the start, click ripples, and pause / resume.
-- **Repro steps** (optional): each click and typed field becomes a step with its time in the video.
-  - **Tab recording**: steps come from the tab you started from.
-  - **Entire screen / window recording**: steps also come from:
-    - clicks in **any Chrome tab**;
-    - **opening or switching tabs**, for example a PDF report that opens in a new tab;
-    - **switching to another program** (Excel, Edge …) and back.
-  - In an entire screen or window recording, each step's picture is taken **from the screen video**, so it shows what was really on the screen, including other programs. On an entire-screen recording the click is outlined in the picture.
-  - A browser extension cannot see clicks *inside* other programs. While another program is in front, a big change of the screen that then stays still becomes a step ("The screen changed"). You can also press **📸 Add step now** in the recorder or in the floating controls. A third way is the shortcut "Screen recorder: add a step now" (set it at `chrome://extensions/shortcuts`, scope *Global*, so it works in any program).
-  - A screenshot for each step and the typed values are both optional. Passwords are never written.
-  - Steps can be copied, downloaded (Markdown, or a ZIP with images), or added with **Add to Manual** / **Add to Test Evidence**.
-- **URL, date and time on step pictures**: Step guide and repro-step pictures get the same URL / date / time bar as screenshots (popup → "Add to image"). Pictures from another program show the date and time only.
-- **Review**: preview the video, rename it, download it, open a frame in the editor, trim it, or export an animated **GIF** (max 30 s, 800 px wide, 10 fps).
-- WebM files get a proper duration, so they can be seeked in any player.
-- Trim, GIF and Frame need the browser to decode the recording. If Chrome cannot decode an MP4 it made, you will see a message and the file can still be downloaded. Choose **WebM** in Quality & options if you trim or make GIFs often: it works every time.
+[**▶ Watch the video**](https://kaushikdebdas.github.io/EvidenceKit/) &nbsp;·&nbsp;
+[**📖 User Manual**](docs/USER_MANUAL.md) &nbsp;·&nbsp;
+[**⚡ Install**](#-install-in-1-minute)
 
-## User Manual
-- **Sections**: split the manual into flows such as "Registration" and "Login". Press **New section here** (list icon) on the first step of a flow (or **＋ Section** at the end) and type its name. Step numbers start at 1 in every section. Move a step with ↑ ↓ across a heading to change its section; **Remove heading** keeps the steps. Every screen recording and step guide you add starts its own section, which you can rename.
-- **Export one section or the whole manual**. The table of contents is grouped by section.
-  - **Word (.docx)** is the main export. It is a real Word document with the pictures inside, A4, with page numbers. It also opens in Google Docs and LibreOffice.
-  - PDF (print), HTML and Markdown are also available.
-- Step titles and descriptions are suggested automatically from what was clicked or captured. The rules run on your computer, with no AI and no server. Press ✨ to suggest again.
-- **Branding**: your logo, a brand color and a table of contents. All of them go into the PDF, HTML, Markdown and Word exports.
-- **Edit image**: opens the editor right inside the manual. Press "Save to step" and the image updates.
+<a href="https://kaushikdebdas.github.io/EvidenceKit/">
+  <img src="docs/media/promo-preview.gif" width="820" alt="EvidenceKit in 20 seconds — click to watch the full video">
+</a>
 
-## User Manual and Test Evidence are separate
-They are two separate documents. You choose where something goes each time you add it, with two buttons: **＋ User Manual** and **＋ Test Evidence**. Press both to add it to both.
-- **After capture → Add to Manual / Test Evidence**: after each screenshot, a message on the page shows the two buttons. Nothing is added until you press one.
-- **Step guide**: the recorded steps wait until you choose.
-  - When you press Finish, the manual page shows the recording with **＋ User Manual / ＋ Test Evidence / Both / Discard**.
-  - If the tab was closed, the recording still waits there, and the popup's book icon shows a red **!**.
-  - In the Test Evidence, the recording becomes a test case.
-- **Screen recorder** (repro steps) and the **editor** each have both buttons too.
-- The switch at the top of the manual page only chooses which document you look at.
-- **⇄ To Test Evidence / To User Manual** on a section heading moves that section and its steps to the other document.
-- **Clear all** empties only the document you are looking at.
-- Steps made before this change are in the User Manual.
+<sub>20-second preview · <a href="https://kaushikdebdas.github.io/EvidenceKit/">full video (1:25)</a> · <a href="docs/media/EvidenceKit-Promo.mp4">download the MP4</a></sub>
 
-## Test Evidence
-Switch the manual page from **User Manual** to **Test Evidence** (top bar). Every section of the Test Evidence is a **test case**.
-- Each test case has an ID (TC-01, TC-02 … automatically, or your own), Pass / Fail / Blocked / Not run, a bug ID, a precondition, and the **expected and actual result**.
-  - You write these once per test case, not for every click. A recorded flow (login, open the form, fill it in, save) gives many steps, and they are simply listed as the test steps.
-  - Leave the actual result empty on a passed test case and the export says "As expected."
-- **◎ Checkpoint**: mark a step where you verify something (for example "Asset saved" appears). Only that step gets its own expected / actual result and Pass / Fail.
-- At the top, fill in the project / module, ticket, build, environment, tester and date. A summary counts the passed, failed, blocked and not-run test cases.
-- **Screenshots** in the export: all steps, only the checkpoints + the last step of each test case, or none.
-- Export to Word (.docx, the main button), PDF, HTML or Markdown. The document starts with a summary table (TC ID, test case, status, bug ID), followed by every test case with its steps and pictures.
-- A step guide recorded while Test Evidence is on starts a section called "Test case — <date>".
+</div>
 
-## Backup and restore
-- **⬇ Backup** (manual page) saves everything into one `.zip`: every step and section with all pictures, the expected / actual results, the title, logo, colour, evidence details and the settings.
-- **⬆ Restore** loads such a file, on this or another computer:
-  - **Replace** puts the backup in place of the current manual.
-  - **Add** appends it after the current steps.
-  - Settings are restored only if you tick the box.
-- Screenshots kept for 24 hours ("Last capture") are not part of the backup. A folder chosen in Settings → Saving must be chosen again on another computer.
+---
 
-## Shortcuts
-Change them at `chrome://extensions/shortcuts`.
-- Alt+Shift+S: visible area
-- Alt+Shift+A: select area
-- Alt+Shift+F: full page
-- Alt+Shift+G: start / stop the step guide
+## Why EvidenceKit?
 
-Element, Dual select, Scroll box, Split view, Delayed capture and Screen recorder have no default key. Chrome gives at most 4 default keys, so you can assign them yourself on that page.
+Bug reports and test evidence take too long: a screenshot here, the URL copied there, the console error pasted somewhere else, then everything put into a Word file by hand. EvidenceKit does all of it in one place:
 
-## Storage and privacy
-- Screenshots are kept in the browser for 24 hours (for the editor and "Last capture"). **Settings → Shortcuts & data → Delete temporary screenshots now** removes them at once. That page also shows how much space EvidenceKit uses.
-  - These temporary screenshots are not part of the User Manual / Test Evidence, so **Clear all** on the manual page does not remove them.
-- Saved files go to `Downloads/QA-Evidence/`, or to **any folder you choose** (Settings → Saving → "A folder I choose").
-  - This covers screenshots, recordings, GIFs and repro steps.
-  - If Chrome asks for permission again (for example after a restart), files go to Downloads until you press "Allow access again".
-  - Brave turns folder picking off, so in Brave files always go to Downloads.
-- Console and network logs are recorded by a small script in each web page. Turn off **Settings → Logs → Capture logs automatically** and the script no longer runs in any page (reload open tabs once).
-- Everything stays on your computer. There is no account and no server.
+- **Proof that holds up.** Every screenshot carries a browser-style bar with the page URL and the real date and time.
+- **The error travels with the picture.** Console and network logs can be added under the screenshot.
+- **Clicks become documentation.** Record a flow once and get a numbered step guide with a picture of every step.
+- **Test evidence in minutes.** Test cases with expected / actual result, Pass / Fail and a summary table, exported as a real **Word (.docx)** file.
+- **Private by design.** Nothing is uploaded. No account and no server: everything stays on your computer.
 
-## Step numbers and editing in the User Manual (update)
-- **Numbers follow the steps.** Steps from the Step guide and from recording Repro steps keep a clean copy of the screenshot. When you delete, move or split steps, the click number on every picture is redrawn automatically to match the Step number shown in the manual (also in the PDF / HTML / Markdown / Word exports).
-- **Annotations stay editable.** *Save to step* now keeps your arrows, boxes, stamps, badges and text as layers. Press **Edit image** again and everything can still be moved, changed or deleted.
-- **The click marker is editable too.** Inside the editor the click outline and its number are normal objects. Its number keeps following the Step number until you change it by hand (double-click the badge).
-- **Your own numbered badges.** *Delete* a badge and the others close the gap (1, 2, 3 …). Use **↻ Renumber** in the badge options at any time. Double-click a badge to type another number.
-- Steps made **before** this update have no clean copy, so they keep their old numbers. Record them again to get automatic numbering.
-- A step saved with the **Frame** option on keeps its number as it was.
-- **Clear messages.** Saving, copying or adding to the manual — in the popup, the editor and the screen recorder — now shows a big green message with a title (and an **Open User Manual** button). It closes by itself after 3 seconds, or press ✕. The editor button is now **Add to Manual**. In the manual, newly added steps glow green with a NEW tag and the page scrolls to them.
+## What it does
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 📸 Capture
+Twelve capture modes: visible area, **full page**, area, element, **dual select**, **split view**, **scroll box**, **mobile view**, screen / app, delayed capture and more. Open menus and tooltips stay in the picture.
+
+<img src="docs/media/feature-capture.jpg" alt="Capture modes">
+</td>
+<td width="50%" valign="top">
+
+### 🕒 URL & real time on every shot
+A browser-style bar with the page address and the date / time is stamped on the picture: your choice of format, size, and position.
+
+<img src="docs/media/feature-url-time.jpg" alt="URL and time bar">
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### ✏️ Annotate
+Arrows, boxes, numbered badges, **QA stamps** (PASS · FAIL · BUG · BLOCKED …), highlight, spotlight, magnifier, blur and redact, crop, and a frame. Saves as PNG, JPG, WebP or PDF.
+
+<img src="docs/media/feature-annotate.jpg" alt="Annotation editor">
+</td>
+<td valign="top">
+
+### 🐞 Console & network in the picture
+Logs are recorded quietly in the background. Add the console and network panels to a screenshot, or export them as text, JSON or **HAR**.
+
+<img src="docs/media/feature-logs.jpg" alt="Console and network logs">
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### 🎬 Record · Trim · Share
+Record a tab, a window or the entire screen (up to 4K / 60 fps, MP4 or WebM) with sound, microphone and a camera bubble. Trim it, make a GIF, and get the **repro steps** with their time in the video.
+
+<img src="docs/media/feature-recorder.jpg" alt="Screen recorder">
+</td>
+<td valign="top">
+
+### 👣 Every click becomes a step
+The **Step guide** turns each click and typed field into a step with a picture and a written title. Passwords are never written.
+
+<img src="docs/media/feature-step-guide.jpg" alt="Step guide">
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
+### 📘 From clicks to a finished document: User Manual & Test Evidence
+Two separate documents. Choose **＋ User Manual** or **＋ Test Evidence** whenever you add something (press both to add it to both).
+
+- **User Manual**: sections, auto-written step titles, your logo and brand colour, and a table of contents.
+- **Test Evidence**: test cases with ID, precondition, **expected / actual result**, **Pass / Fail / Blocked**, bug ID, checkpoints, and a summary.
+- Export to **Word (.docx)**, PDF, HTML or Markdown. **Backup & restore** everything as one `.zip`.
+
+<img src="docs/media/ui-test-evidence.png" alt="The Test Evidence page">
+</td>
+</tr>
+</table>
+
+<details>
+<summary><b>See an exported Test Evidence document</b></summary>
+<br>
+
+| Word (.docx) | HTML |
+|---|---|
+| <img src="docs/media/ui-evidence-word.png" width="420" alt="Test Evidence in Word"> | <img src="docs/media/ui-evidence-html.png" width="420" alt="Test Evidence as HTML"> |
+
+</details>
+
+## ⚡ Install in 1 minute
+
+> EvidenceKit is not in the Chrome Web Store yet. It is installed from this repository with Chrome's *Load unpacked*.
+
+1. **Download**: click **Code → Download ZIP** at the top of this page and unzip it. Or clone it:
+   ```bash
+   git clone https://github.com/KaushikDebdas/EvidenceKit.git
+   ```
+2. **Developer mode**: open `chrome://extensions` (Edge: `edge://extensions`) and turn on **Developer mode**.
+3. **Load unpacked**: click **Load unpacked** and choose the folder that contains `manifest.json`.
+4. **Pin it**: click the puzzle icon in the toolbar and pin **EvidenceKit**.
+
+> [!TIP]
+> **Updating:** replace the files, then press **⟳ Reload** on the EvidenceKit card in `chrome://extensions`. Your screenshots, manuals and test evidence are kept.
+
+## 🚀 Quick start
+
+| I want to… | Do this |
+|---|---|
+| **Report a bug with proof** | Press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> → mark the problem in the editor (box, arrow, **FAIL** stamp) → **Save** or **Copy**. Tick **Console / Network** in the popup first to put the errors in the picture. |
+| **Record test evidence for a flow** | Press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd>, do the flow, press **Finish** → choose **＋ Test Evidence** → write the expected / actual result and set **Pass / Fail** → **Word (.docx)**. |
+| **Write a user manual** | Record a Step guide or set *After capture → Add to Manual / Test Evidence* → choose **＋ User Manual** → add sections, titles and your logo → **Word (.docx)**. |
+| **Record a video bug report** | Popup → **Record screen** → tick *Repro steps* → record → **Download**, make a **GIF**, or **Add to Test Evidence**. |
+
+## ⌨️ Keyboard shortcuts
+
+| Shortcut | Action |
+|---|---|
+| <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> | Capture the visible area |
+| <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd> | Select an area |
+| <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> | Full page |
+| <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> | Start / stop the Step guide |
+
+More commands are waiting for a key at `chrome://extensions/shortcuts`: element, dual select, scroll box, split view, delayed capture, the screen recorder, and *add a recorder step* (that one can be *Global*).
+
+## 🔒 Privacy
+
+- **Nothing leaves your computer.** There is no account, no server, no analytics and no AI service. Step titles are written by simple rules on your computer.
+- Screenshots stay in the browser for 24 hours (for *Last capture*). Saved files go to `Downloads/QA-Evidence/` or a folder you choose.
+- Console and network logging can be switched off completely in **Settings → Logs**.
+
+## 🧩 Requirements
+
+- Chrome, Microsoft Edge or Brave, a recent version (Manifest V3).
+- Windows, macOS or Linux. Word exports open in Microsoft Word, Google Docs and LibreOffice.
+
+## 📁 Project structure
+
+```text
+EvidenceKit/
+├── manifest.json          extension manifest (MV3)
+├── background.js          service worker: captures, step guide, recorder steps, saving
+├── content/               scripts injected into web pages (selection overlay, step guide, log hooks)
+├── popup/                 toolbar popup
+├── editor/                annotation editor (Fabric.js)
+├── recorder/              screen recorder, repro steps, trim and GIF
+├── manual/                User Manual & Test Evidence builder, Word / HTML / Markdown export, backup
+├── options/               settings page
+├── lib/                   shared code (IndexedDB, image composition, .docx writer, logs …)
+├── icons/
+└── docs/                  user manual, video and pictures for this page
+```
+
+## 📖 Documentation
+
+- **[User Manual](docs/USER_MANUAL.md)**: every feature, step by step.
+- **[Video](https://kaushikdebdas.github.io/EvidenceKit/)**: the 1:25 tour.
+
+---
+
+<div align="center">
+<sub>EvidenceKit · made for QA engineers · your evidence stays on your computer</sub>
+</div>
