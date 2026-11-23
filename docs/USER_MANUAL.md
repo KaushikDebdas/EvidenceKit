@@ -65,7 +65,9 @@ Click the EvidenceKit icon in the toolbar.
 - **Add to image**: the URL, date and time on the picture.
 - **Logs**: put the console and / or network panel under the screenshot, optionally errors only.
 - **After capture**: what happens after each screenshot (see [5](#5-after-capture)).
-- **📖 (book)**: opens the User Manual / Test Evidence page. A red **!** means a recorded step guide is waiting for you to choose where it goes.
+- **📖 (book)**: opens the **User Manual**. The number on it is how many steps the User Manual has.
+- **📋 (clipboard)**: opens the **Test Evidence**. The number on it is how many steps the Test Evidence has (its tooltip also shows the number of test cases).
+- **● N waiting** (red, only when needed): a recorded Step guide is waiting for you to choose *User Manual* or *Test Evidence*. Click it to choose.
 - **⚙ (gear)**: Settings.
 - The bottom line shows how many console messages and network requests were recorded for this tab.
 
@@ -220,7 +222,7 @@ When you press **Finish**, the User Manual page opens and asks where the recordi
 
 <img src="media/ui-waiting-recording.png" width="640" alt="A recorded step guide waiting for a choice">
 
-**＋ User Manual**, **＋ Test Evidence**, **Both** or **Discard**. In the Test Evidence the recording becomes a test case. If you closed the tab instead, the recording still waits there (the popup's book icon shows a red **!**).
+**＋ User Manual**, **＋ Test Evidence**, **Both** or **Discard**. In the Test Evidence the recording becomes a test case. If you closed the tab instead, the recording still waits there (the popup shows a red **● N waiting**).
 
 ---
 

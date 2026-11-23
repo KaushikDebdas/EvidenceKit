@@ -53,7 +53,12 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .big b { font-weight: 600; font-size: 12.5px; }
 /* the line under "Record screen" / "Step guide" may take two lines: never cut it off */
 .big small { font-size: 10.5px; line-height: 1.25; color: var(--mut); white-space: normal; overflow-wrap: anywhere; }
-#stepCount.wait { background: #dc2626; color: #fff; }
+/* number of steps: User Manual (accent) and Test Evidence (teal, like its "＋ Test Evidence" buttons) */
+.dot.ev { background: #0f766e; }
+/* step-guide recordings waiting for "Add to …" */
+.waitchip { align-self: center; margin-right: 4px; padding: 3px 9px; border-radius: 99px; background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.waitchip:hover { background: #fecaca; }
+body.dark .waitchip { background: #7f1d1d; color: #fecaca; }
 .big kbd { display: none; }
 .big.on { border-color: #fca5a5; background: #fef2f2; }
 .big.on .ic { color: #fff; background: var(--red); animation: pulse 1.4s infinite; }

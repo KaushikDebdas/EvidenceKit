@@ -2,18 +2,22 @@ import { DEFAULT_SETTINGS, dtChips, dtFromChips } from '../lib/compose.js';
 import { dbAll } from '../lib/db.js';
 import { docOf } from '../lib/docs.js';
 
-// the book button: steps in the User Manual / Test Evidence, and step-guide recordings still waiting for a choice
+// 📖 User Manual and 📋 Test Evidence buttons with how many steps each has, and a chip for step-guide
+// recordings still waiting for "Add to …"
 async function renderDocs() {
   try {
     const all = await dbAll('steps');
-    const n = (d) => all.filter((x) => x.type !== 'section' && docOf(x) === d).length;
-    const waiting = n('pending');
-    const dot = $('stepCount');
-    dot.textContent = waiting ? '!' : '';
-    dot.classList.toggle('wait', !!waiting);
-    $('manual').title = `User Manual: ${n('manual')} steps · Test Evidence: ${n('evidence')} steps`
-      + (waiting ? `
-${waiting} recorded steps are waiting — open to choose where they go` : '');
+    const count = (d, sections) => all.filter((x) => (x.type === 'section') === sections && docOf(x) === d).length;
+    const show = (id, n) => { $(id).textContent = n ? (n > 99 ? '99+' : String(n)) : ''; };
+    const m = count('manual', false), ev = count('evidence', false), tc = count('evidence', true), waiting = count('pending', false);
+    show('stepCount', m);
+    show('evCount', ev);
+    $('manual').title = `User Manual — ${m} step${m === 1 ? '' : 's'}`;
+    $('evidence').title = `Test Evidence — ${ev} step${ev === 1 ? '' : 's'} in ${tc} test case${tc === 1 ? '' : 's'}`;
+    const w = $('waitBtn');
+    w.hidden = !waiting;
+    w.textContent = `● ${waiting} waiting`;
+    w.title = `A recorded Step guide (${waiting} step${waiting === 1 ? '' : 's'}) is waiting — open it to choose User Manual or Test Evidence`;
   } catch (e) {}
 }
 
@@ -267,7 +271,9 @@ $('lastShot').addEventListener('click', async () => {
   await chrome.tabs.create({ url: chrome.runtime.getURL(`editor/editor.html?id=${r.lastCapture}&action=edit`) });
   window.close();
 });
-$('manual').addEventListener('click', async () => { await send({ type: 'openManual' }); window.close(); });
+$('manual').addEventListener('click', async () => { await send({ type: 'openManual', doc: 'manual' }); window.close(); });
+$('evidence').addEventListener('click', async () => { await send({ type: 'openManual', doc: 'evidence' }); window.close(); });
+$('waitBtn').addEventListener('click', async () => { await send({ type: 'openManual' }); window.close(); });
 $('settings').addEventListener('click', async () => { await send({ type: 'openOptions' }); window.close(); });
 $('logReload').addEventListener('click', async () => { await send({ type: 'reloadTab', tabId }); window.close(); });
 
