@@ -1,6 +1,7 @@
 import { DEFAULT_SETTINGS, fileStamp, compose, composeOpts } from '../lib/compose.js';
 import { markOf, bakeMarker } from '../lib/stepimg.js';
 import { fixWebmDuration } from '../lib/webm-duration.js';
+import { fixMp4 } from '../lib/mp4-faststart.js';
 import { dbPut, uid } from '../lib/db.js';
 import { saveToChosenFolder } from '../lib/savedir.js';
 
@@ -309,7 +310,7 @@ async function finish() {
   $('micBox').hidden = true;
   $('camBox').hidden = true;
   let blob = new Blob(chunks, { type: fmt.type.split(';')[0] });
-  if (fmt.ext === 'webm') blob = await fixWebmDuration(blob, durationMs);
+  blob = fmt.ext === 'webm' ? await fixWebmDuration(blob, durationMs) : await fixMp4(blob);
   recorder = null;
   showResult(blob, `QA-recording-${fileStamp(Date.now())}`);
   if ($('autoSave').checked) download();
@@ -472,7 +473,7 @@ async function trim() {
     const t0 = trimIn * 1000, t1 = end * 1000;
     steps = steps.filter((x) => x.at >= t0 && x.at <= t1).map((x) => ({ ...x, at: x.at - t0 }));
     let blob = new Blob(out, { type: fmt.type.split(';')[0] });
-    if (fmt.ext === 'webm') blob = await fixWebmDuration(blob, durationMs);
+    blob = fmt.ext === 'webm' ? await fixWebmDuration(blob, durationMs) : await fixMp4(blob);
     showResult(blob, $('outName').value.replace(/-trimmed$/, '') + '-trimmed');
     $('trimProg').textContent = 'Trimmed copy ready — press Download.';
   } catch (e) {
