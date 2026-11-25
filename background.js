@@ -273,7 +273,83 @@ async function capFullApp(tab, a) {
   return out.convertToBlob({ type: 'image/png' });
 }
 
-async function capFull(tab) {
+// Runs in the page: open every box that scrolls up/down (tables, side panels, lists, a scrolling <body>)
+// to its full height, and un-clip the parents around it, so the whole page becomes one long page.
+// Returns how many boxes were opened (0 = nothing changed). restoreScrollers() puts everything back.
+function expandScrollers() {
+  const de = document.documentElement, body = document.body;
+  if (!body) return 0;
+  const vh = innerHeight;
+  const scrolls = (el, cs) => el.scrollHeight > el.clientHeight + 8 && /(auto|scroll|overlay)/.test(cs.overflowY);
+  const found = [];
+  for (const el of [body, ...body.querySelectorAll('*')]) {
+    if (el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.clientHeight < 30 || el.clientWidth < 50) continue;
+    const cs = getComputedStyle(el);
+    if (!scrolls(el, cs) || cs.visibility === 'hidden') continue;
+    const r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) continue;
+    found.push(el);
+  }
+  const pageScrolls = de.scrollHeight > vh + 4 && getComputedStyle(de).overflowY !== 'hidden' && !found.includes(body);
+  // just one big inner box and a page that does not scroll: the older "stretch the box" capture handles that
+  // best (it scrolls the box itself, so lists that only draw the rows on screen still come out complete)
+  if (!found.length || (!pageScrolls && found.length === 1 && found[0] !== body)) return 0;
+
+  const saved = [];
+  window.__evkOpened = saved;
+  window.__evkWin = [scrollX, scrollY];
+  const open = (el, unfix) => {
+    if (el.__evkS === undefined) { el.__evkS = { css: el.getAttribute('style'), st: el.scrollTop }; saved.push(el); }
+    el.style.setProperty('overflow', 'visible', 'important');
+    el.style.setProperty('height', 'auto', 'important');
+    el.style.setProperty('max-height', 'none', 'important');
+    el.style.setProperty('min-height', 'auto', 'important');
+    if (unfix) el.style.setProperty('position', 'absolute', 'important');
+  };
+  found.forEach((el) => open(el));
+  // parents that are now too short for the taller box (cut it off, scroll it, or let it spill out): grow them too
+  for (let pass = 0; pass < 3; pass++) {
+    let changed = false;
+    for (const el of found) {
+      for (let a = el.parentElement; a; a = a.parentElement) {
+        const cs = getComputedStyle(a);
+        const clips = a.scrollHeight > a.clientHeight + 4; // cut off, scrolled, or a fixed height the content spills out of
+        const fixedRoot = cs.position === 'fixed' && a.getBoundingClientRect().height >= vh * 0.5; // a full-screen app shell
+        if (clips || fixedRoot || ((a === de || a === body) && cs.overflowY === 'hidden')) {
+          if (a.__evkS === undefined || clips) { open(a, fixedRoot); changed = true; }
+        }
+      }
+    }
+    if (!changed) break;
+  }
+  scrollTo(0, 0);
+  return saved.length;
+}
+function restoreScrollers() {
+  const list = window.__evkOpened || [];
+  for (const el of list) {
+    if (el.__evkS.css == null) el.removeAttribute('style'); else el.setAttribute('style', el.__evkS.css);
+  }
+  for (const el of list) { el.scrollTop = el.__evkS.st; delete el.__evkS; }
+  window.__evkOpened = null;
+  const [x, y] = window.__evkWin || [scrollX, scrollY];
+  scrollTo(x, y);
+}
+
+// expand: open inner scroll boxes first (off for an element capture, which crops by the page's normal layout)
+async function capFull(tab, { expand = true } = {}) {
+  const opened = expand && (await getSettings()).fullScrollAreas !== false
+    ? await exec(tab.id, expandScrollers).catch(() => 0) : 0;
+  if (!opened) return capFullPage(tab);
+  try {
+    await sleep(400); // let the page lay itself out again
+    return await capFullPage(tab);
+  } finally {
+    await exec(tab.id, restoreScrollers).catch(() => {});
+  }
+}
+
+async function capFullPage(tab) {
   const info = await exec(tab.id, () => {
     const de = document.documentElement, b = document.body;
     return { vw: innerWidth, vh: innerHeight, dpr: devicePixelRatio || 1, total: Math.max(de.scrollHeight, b ? b.scrollHeight : 0), x: scrollX, y: scrollY };
@@ -378,7 +454,7 @@ async function selDone(senderTab, msg) {
   if (msg.big) {
     // element taller / wider than the screen: full page capture, then crop in page coordinates
     await sleep(150);
-    const full = await createImageBitmap(await capFull(tab));
+    const full = await createImageBitmap(await capFull(tab, { expand: false }));
     const out = cropBmp(full, msg.doc, msg.vw);
     full.close();
     return finalize(tab, await out.convertToBlob({ type: 'image/png' }), 'element');
