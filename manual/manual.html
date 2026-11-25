@@ -15,7 +15,7 @@
     <button data-mode="manual" title="Step-by-step guide for users">User Manual</button>
     <button data-mode="evidence" title="Test cases with expected / actual result and Pass / Fail">Test Evidence</button>
   </div>
-  <span class="hint" id="barHint">Add screenshots with “After capture → Add to Manual / Test Evidence” or the editor’s “Add to Manual”. Paste (Ctrl+V) an image here to add it as a step.</span>
+  <span class="hint" id="barHint">Add screenshots with “After capture → Add to Manual / Test Evidence” or the editor’s “Add to Manual”. Click a step and press Ctrl+V to add a picture to it; use “＋ Image here” between steps for a new step.</span>
   <span class="spacer"></span>
   <div class="btns">
     <label class="filebtn">＋ Add image<input type="file" id="addFile" accept="image/*" multiple hidden></label>
@@ -29,8 +29,14 @@
     <button id="expPdf">🖨 PDF (print)</button>
     <button id="expHtml">HTML</button>
     <button id="expMd">Markdown (.zip)</button>
-    <button id="backupBtn" title="Save every step, section, picture and setting of this manual into one .zip file">⬇ Backup</button>
-    <label class="filebtn" title="Load a backup .zip (from this or another computer)">⬆ Restore<input type="file" id="restoreFile" accept=".zip,application/zip" hidden></label>
+    <span class="menuwrap">
+      <button id="backupBtn" aria-haspopup="menu" aria-expanded="false" title="Save every step, section, picture and setting into one file (.zip or .json)">⬇ Backup ▾</button>
+      <div id="backupMenu" class="menu" role="menu" hidden>
+        <button data-fmt="zip" role="menuitem"><b>Backup as .zip</b><small>Smallest file. Pictures stay as image files inside.</small></button>
+        <button data-fmt="json" role="menuitem"><b>Backup as .json</b><small>One text file with everything, pictures included. About ⅓ bigger.</small></button>
+      </div>
+    </span>
+    <label class="filebtn" title="Load a backup .zip or .json (from this or another computer)">⬆ Restore<input type="file" id="restoreFile" accept=".zip,.json,application/zip,application/json" hidden></label>
     <button id="clearAll" class="danger">🗑 Clear all</button>
   </div>
 </div>

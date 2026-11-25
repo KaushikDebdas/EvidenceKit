@@ -169,3 +169,54 @@ body:not(.evidence) .evonly { display: none !important; }
   #okbar button:not(.okx) { padding: 4px 9px; font-size: 12px; border-radius: 7px; }
   #okbar .okx { font-size: 15px; }
 }
+
+/* several pictures per step, each with its own caption */
+.pic { margin-top: 12px; }
+.pic-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.pic-cap { flex: 1; min-width: 200px; padding: 7px 10px; border: 1px solid #d1d5db; border-radius: 6px; font: inherit; font-size: 13.5px; background: #fff; outline: none; }
+.pic-cap:focus { border-color: var(--brand); box-shadow: 0 0 0 2px #e0e7ff; }
+.pic-tools { display: flex; gap: 2px; align-items: center; flex-wrap: wrap; }
+.pic-tools button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; background: none; border-color: transparent; color: #374151; font-weight: 500; }
+.pic-tools button:hover:not(:disabled) { background: #f3f4f6; border-color: #e5e7eb; }
+.pic-tools button:disabled { opacity: .3; }
+.pic-tools .bi { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pic-tools .editbtn { color: #3730a3; }
+.pic-tools .link-danger { color: #b91c1c; }
+.pic-tools .link-danger:hover { background: #fef2f2 !important; border-color: #fecaca !important; }
+.pic-no { color: #6b7280; font-size: 12px; margin-right: 4px; white-space: nowrap; }
+
+/* "Add another screenshot" box at the bottom of every step */
+.addshot { margin-top: 12px; padding: 16px 12px 14px; border: 1.5px dashed #c7cdd6; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; color: #6b7280; font-size: 13px; background: #fafbfc; }
+.addshot svg { width: 26px; height: 26px; fill: none; stroke: #6b7280; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 2px; }
+.addshot b { color: #111827; font-size: 14px; }
+.addshot-btns { display: flex; gap: 6px; margin-top: 6px; }
+.addshot-btns button { padding: 3px 12px; font-size: 13px; }
+.step { cursor: default; }
+.step.drop-on { outline: 3px dashed var(--brand); outline-offset: 6px; border-radius: 10px; background: #eef2ff; }
+.step.drop-on .addshot { border-color: var(--brand); background: #eef2ff; }
+.step.paste-here { outline: 2px solid var(--brand); outline-offset: 6px; border-radius: 10px; box-shadow: -6px 0 0 0 var(--brand); }
+.step.paste-here .addshot { border-color: var(--brand); background: #f5f7ff; }
+.step.paste-here .addshot span::after { content: "  ✓ highlighted — press Ctrl+V"; color: var(--brand); font-weight: 600; }
+@media print {
+  .addshot, .pic-tools { display: none !important; }
+  .pic-cap { border: 0; padding: 0; font-weight: 600; }
+  .pic-cap:placeholder-shown { display: none; }
+  .step.paste-here { outline: 0; box-shadow: none; }
+}
+
+/* the thin "＋ Image here · 📋 Paste here" bar between two items */
+.ins { position: relative; display: flex; justify-content: center; gap: 6px; height: 22px; margin: 2px 0; opacity: .35; transition: opacity .15s; cursor: pointer; }
+.ins::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed #c7d2fe; z-index: 0; }
+.ins button { position: relative; z-index: 1; padding: 0 9px; font-size: 12px; line-height: 20px; color: var(--brand); border-color: #c7d2fe; border-radius: 999px; }
+.ins:hover, .ins.paste-here, .ins.drop-on { opacity: 1; }
+.ins.paste-here::before, .ins.drop-on::before { border-top: 2px solid var(--brand); }
+.ins.drop-on { height: 48px; background: #eef2ff; border-radius: 8px; }
+.ins.paste-here::after { content: "Ctrl+V goes here"; position: absolute; right: 0; top: 1px; font-size: 11px; color: var(--brand); background: #fff; padding: 0 4px; z-index: 1; }
+@media print { .ins { display: none !important; } }
+
+/* "⬇ Backup ▾" menu: .zip or .json */
+.menuwrap { position: relative; display: inline-block; }
+.menu { position: absolute; right: 0; top: calc(100% + 4px); z-index: 25; width: 290px; background: #fff; border: 1px solid #d1d5db; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.18); padding: 4px; display: flex; flex-direction: column; }
+.menu button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: left; white-space: normal; border: 0; padding: 8px 10px; }
+.menu button small { color: #6b7280; font-size: 12px; }
+.menu button:hover { background: #eef2ff; }

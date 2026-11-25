@@ -14,6 +14,13 @@ const cols = (...parts) => { // column widths from fractions of the page width
 };
 const cellP = (runs) => para(runs, { after: 0 });
 const labelCell = (text, shade = 'F3F4F6') => ({ content: cellP(run(text, { b: true })), shade });
+// a step's pictures, each with its caption above it
+async function pictures(d, item) {
+  for (const m of [item.blob ? item : null, ...(item.more || [])].filter(Boolean)) {
+    if (m.cap) d.add(para(run(m.cap, { b: true, color: '374151', size: 10 }), { keepNext: true, before: 120, after: 40 }));
+    d.add(await d.image(m.blob));
+  }
+}
 
 async function head(d, { title, logo, metaLine }) {
   if (logo) d.add(await d.image(logo, { maxWcm: 5, maxHcm: 1.6, border: false }));
@@ -21,7 +28,7 @@ async function head(d, { title, logo, metaLine }) {
   if (metaLine) d.add(para(run(metaLine, { color: '6B7280', size: 9 }), { after: 240 }));
 }
 
-/** User Manual: { title, color, logo (Blob), metaLine, toc, groups: [{ title|null, items: [{ n, title, desc, blob }] }] } */
+/** User Manual: { title, color, logo (Blob), metaLine, toc, groups: [{ title|null, items: [{ n, title, desc, blob, more: [{ blob }] }] }] } */
 export async function manualDocx(m) {
   const d = new Docx({ title: m.title, color: m.color });
   await head(d, m);
@@ -39,7 +46,7 @@ export async function manualDocx(m) {
     for (const it of g.items) {
       d.add(para(run(`${NBSP}Step ${it.n}${NBSP}`, { b: true, color: 'FFFFFF', shade: m.color }) + (it.title ? run(`  ${it.title}`) : ''), { style: 'Heading2' }));
       if (it.desc) d.add(para(run(it.desc), { keepNext: !!it.blob }));
-      if (it.blob) d.add(await d.image(it.blob));
+      await pictures(d, it);
     }
   }
   return d.toBlob();
@@ -93,7 +100,7 @@ export async function evidenceDocx(doc, logo) {
         if (actualOf(s)) ck.push({ cells: [labelCell('Actual', 'FFFBEB'), { content: cellP(run(actualOf(s))) }] });
         d.add(table(ck, cols(0.2, 0.8), { border: 'FCD34D' }));
       }
-      if (s.blob) d.add(await d.image(s.blob));
+      await pictures(d, s);
     }
   }
   return d.toBlob();

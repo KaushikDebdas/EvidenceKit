@@ -34,7 +34,7 @@ const badge = (st) => { const s = STATUS[statusOf(st)]; return `<span class="bad
 
 /**
  * doc = { title, color, logo (data URL), metaLine, info: {project,…}, cases: [{ tcId, title, loose, status, bug, pre, expected, actual,
- *         steps: [{ n, title, desc, check, status, expected, actual, dataUrl }] }] }
+ *         steps: [{ n, title, desc, check, status, expected, actual, dataUrl, more: [{ blob, dataUrl }] }] }] }
  */
 export function buildEvidenceHtml(doc, forWord) {
   const c = doc.color || '#4f46e5';
@@ -51,7 +51,7 @@ export function buildEvidenceHtml(doc, forWord) {
     const ck = s.check
       ? `<table class="kv ck"><tr><th>Checkpoint</th><td>${badge(s.status)}</td></tr>${s.expected ? `<tr><th>Expected</th><td>${multi(s.expected)}</td></tr>` : ''}${actualOf(s) ? `<tr><th>Actual</th><td>${multi(actualOf(s))}</td></tr>` : ''}</table>`
       : '';
-    return `<li><div class="st">${esc(s.title || 'Step ' + s.n)}</div>${s.desc ? `<div class="sd">${multi(s.desc)}</div>` : ''}${ck}${s.dataUrl ? `<img src="${s.dataUrl}" alt="Step ${s.n}"${imgAttr}>` : ''}</li>`;
+    return `<li><div class="st">${esc(s.title || 'Step ' + s.n)}</div>${s.desc ? `<div class="sd">${multi(s.desc)}</div>` : ''}${ck}${[s.dataUrl ? s : null, ...(s.more || [])].filter(Boolean).map((m, k) => `<figure>${m.cap ? `<figcaption>${esc(m.cap)}</figcaption>` : ''}<img src="${m.dataUrl}" alt="${esc(m.cap || `Step ${s.n}${k ? ` — picture ${k + 1}` : ''}`)}"${imgAttr}></figure>`).join('')}</li>`;
   };
 
   const caseHtml = (t, i) => {
@@ -86,7 +86,7 @@ h3{font-size:15px;margin:12px 0 6px;color:#374151}
 a{color:${c};text-decoration:none}
 ol.steps{padding-left:22px}ol.steps li{margin:0 0 14px;page-break-inside:avoid}
 .st{font-weight:700}.sd{color:#374151;font-size:13.5px}
-img{max-width:100%;border:1px solid #d1d5db;margin-top:6px}
+figure{margin:8px 0 0}figcaption{font-size:12.5px;font-weight:600;color:#374151;margin-bottom:3px}img{max-width:100%;border:1px solid #d1d5db;display:block}
 .chips{margin:4px 0 8px}
 </style></head><body>
 <div class="head">${doc.logo ? `<img src="${doc.logo}" alt="">` : ''}<h1>${esc(doc.title)}</h1></div>
@@ -131,12 +131,13 @@ export function buildEvidenceMd(doc, logoFile) {
         if (s.expected) md += `   - Expected: ${s.expected.replace(/\r?\n/g, ' ')}\n`;
         if (actualOf(s)) md += `   - Actual: ${actualOf(s).replace(/\r?\n/g, ' ')}\n`;
       }
-      if (s.blob) {
-        const ext = /jpe?g/.test(s.blob.type) ? 'jpg' : /webp/.test(s.blob.type) ? 'webp' : 'png';
-        const path = `images/${String(++img).padStart(3, '0')}-${t.loose ? 'step' : t.tcId.replace(/[^\w.-]+/g, '_')}-${s.n}.${ext}`;
-        files.push({ path, blob: s.blob });
-        md += `\n   ![Step ${s.n}](${path})\n\n`;
-      }
+      [s.blob ? s : null, ...(s.more || [])].filter(Boolean).forEach((m, k) => {
+        const b = m.blob;
+        const ext = /jpe?g/.test(b.type) ? 'jpg' : /webp/.test(b.type) ? 'webp' : 'png';
+        const path = `images/${String(++img).padStart(3, '0')}-${t.loose ? 'step' : t.tcId.replace(/[^\w.-]+/g, '_')}-${s.n}${k ? `-${k + 1}` : ''}.${ext}`;
+        files.push({ path, blob: b });
+        md += `\n${m.cap ? `   **${m.cap.replace(/\r?\n/g, ' ')}**\n\n` : ''}   ![${m.cap ? m.cap.replace(/[\r\n\]]/g, ' ') : `Step ${s.n}${k ? ` — picture ${k + 1}` : ''}`}](${path})\n\n`;
+      });
     }
     md += '\n';
   });

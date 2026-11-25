@@ -320,8 +320,10 @@ A Test Evidence export starts with the project details and a **summary table** (
 
 On the 📖 page:
 
-- **⬇ Backup** saves **both documents** into one `.zip`: every step and section with all pictures, results, titles, logo, colour, evidence details and your settings.
-- **⬆ Restore** loads such a file, on this or another computer:
+- **⬇ Backup ▾** saves **both documents** into one file: every step and section with all pictures (and their captions), results, titles, logo, colour, evidence details and your settings. Choose the format:
+  - **Backup as .zip**: the smallest file; the pictures are image files inside it.
+  - **Backup as .json**: one plain text file with everything, pictures included (about a third bigger).
+- **⬆ Restore** loads a `.zip` or `.json` backup, on this or another computer:
   - **Replace everything**: the backup takes the place of both documents.
   - **Add to what I have**: the backup's steps go after the current ones, each into its own document.
   - Tick *Also restore the extension settings* to take the settings too.

@@ -1,8 +1,8 @@
-import { dbPut, dbPutIfExists, dbDelMany, dbGet, dbDel, dbClear, getSteps, uid } from '../lib/db.js';
+import { dbPut, dbPutIfExists, dbPutMany, dbDelMany, dbGet, dbDel, dbClear, getSteps, uid } from '../lib/db.js';
 import { syncNumber } from '../lib/stepimg.js';
 import { fmtTime, fileStamp, formatDate } from '../lib/compose.js';
 import { STATUS_OPTIONS, statusOf, tcIdOf, countStatus, buildEvidenceHtml, buildEvidenceMd } from './evidence-export.js';
-import { makeBackup, readBackup, KV_KEYS } from './backup.js';
+import { makeBackup, makeBackupJson, readBackup, KV_KEYS } from './backup.js';
 import { manualDocx, evidenceDocx } from './docx-export.js';
 import { DOC_NAMES, docOf, activeDoc, setActiveDoc, pendingBatches, resolveBatch } from '../lib/docs.js';
 
@@ -199,8 +199,8 @@ async function applyMode() {
   document.querySelectorAll('.modeseg button').forEach((b) => b.classList.toggle('on', b.dataset.mode === mode));
   $('barTitle').textContent = word('User Manual builder', 'Test Evidence builder');
   $('barHint').textContent = word(
-    'Add screenshots with “After capture → Add to Manual / Test Evidence” or the editor’s “Add to Manual”. Paste (Ctrl+V) an image here to add it as a step.',
-    'Each section is a test case: write its expected and actual result once. Mark a step as ◎ Checkpoint only where you verify something.');
+    'Add screenshots with “After capture → Add to Manual / Test Evidence” or the editor’s “Add to Manual”. Click a step and press Ctrl+V to add a picture to it; use “＋ Image here” between steps for a new step.',
+    'Each section is a test case: write its expected and actual result once. Mark a step as ◎ Checkpoint only where you verify something. Click a step + Ctrl+V adds a picture to it, with its own caption.');
   $('addSection').textContent = word('＋ Section', '＋ Test case');
   $('addSection').title = word('Add a section heading (e.g. Registration, Login) at the end', 'Add a test case heading at the end');
   document.querySelector('[data-info="date"]').placeholder = today();
@@ -280,10 +280,11 @@ function renderToc() {
 
 // ---------------- in-page editor (annotate without leaving the manual) ----------------
 let edDirty = false;
-function openEditor(s, label) {
+// k = 0: the step's main picture, k >= 1: its extra picture k
+function openEditor(s, label, k = 0) {
   edDirty = false;
-  $('edN').textContent = label;
-  $('edFrame').src = chrome.runtime.getURL(`editor/editor.html?step=${s.id}&n=${label}&embed=1`);
+  $('edN').textContent = k ? `${label}, picture ${k + 1}` : label;
+  $('edFrame').src = chrome.runtime.getURL(`editor/editor.html?step=${s.id}&n=${label}${k ? `&img=${k}` : ''}&embed=1`);
   $('edModal').hidden = false;
   document.body.classList.add('modal-open');
 }
@@ -451,7 +452,6 @@ function renderStep(s, i, n) {
   }
   btn('↑', 'Move up', () => move(i, -1), i === 0);
   btn('↓', 'Move down', () => move(i, 1), i === steps.length - 1);
-  if (s.blob) btn('Edit image', 'Edit this image: arrows, boxes, text, blur, stamps …', () => openEditor(s, n), false, 'editbtn', 'edit');
   btn('🗑', 'Delete step', async () => {
     let secName = '';
     for (let k = i - 1; k >= 0; k--) if (isSec(steps[k])) { secName = steps[k].title || 'Untitled section'; break; }
@@ -471,15 +471,62 @@ function renderStep(s, i, n) {
 
   wrap.append(head, desc);
   if (ck) wrap.append(ck);
-  if (s.blob) {
+  // pictures: each one with its own caption, ↑ ↓, Edit, Replace and Remove
+  const into = { into: s.id };
+  const pics = picsOf(s);
+  pics.forEach((p, k) => {
+    const fig = document.createElement('div');
+    fig.className = 'pic';
+    const bar = document.createElement('div');
+    bar.className = 'pic-bar';
+    const cap = Object.assign(document.createElement('input'), {
+      className: 'pic-cap', value: p.cap || '',
+      placeholder: pics.length > 1 ? `Caption for picture ${k + 1}, e.g. Error message after Save` : 'Caption, e.g. Login screen',
+    });
+    cap.addEventListener('input', () => { p.ref.cap = cap.value; saveSoon(s); });
+    const tools = document.createElement('div');
+    tools.className = 'pic-tools noprint';
+    if (pics.length > 1) tools.append(Object.assign(document.createElement('span'), { className: 'pic-no', textContent: `${k + 1} / ${pics.length}` }));
+    const pb = mkTools(tools);
+    if (pics.length > 1) {
+      pb('↑', 'Move this picture up', () => movePic(s, k, -1), k === 0);
+      pb('↓', 'Move this picture down', () => movePic(s, k, 1), k === pics.length - 1);
+    }
+    pb('Edit', 'Draw arrows, boxes, text, blur … on this picture', () => openEditor(s, n, k), false, 'editbtn', 'edit');
+    pb('Replace', 'Put another picture here (the caption stays)', () => pickFiles(null, (files) => replacePic(s, k, files[0])));
+    pb('Remove', pics.length > 1 ? 'Remove this picture' : 'Remove the picture (the step text stays)', () => removeImage(s, k, n), false, 'link-danger');
+    bar.append(cap, tools);
     const img = document.createElement('img');
-    const u = URL.createObjectURL(s.blob);
+    if (!k) img.className = 'main';
+    const u = URL.createObjectURL(p.blob);
     urls.push(u);
     img.src = u;
-    img.alt = `Step ${n}`;
-    img.addEventListener('dblclick', () => openEditor(s, n));
-    wrap.append(img);
-  }
+    img.alt = pics.length > 1 ? `Step ${n} — picture ${k + 1}` : `Step ${n}`;
+    img.addEventListener('dblclick', () => openEditor(s, n, k));
+    fig.append(bar, img);
+    wrap.append(fig);
+  });
+  // "Add another screenshot": Ctrl+V while the step is highlighted, drop files, Browse or Paste
+  const zone = document.createElement('div');
+  zone.className = 'addshot noprint';
+  zone.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>';
+  zone.append(
+    Object.assign(document.createElement('b'), { textContent: pics.length ? 'Add another screenshot' : 'Add a screenshot' }),
+    Object.assign(document.createElement('span'), { textContent: 'Ctrl+V while this step is highlighted, or drop files' }),
+  );
+  const zb = document.createElement('div');
+  zb.className = 'addshot-btns';
+  const zt = mkTools(zb);
+  zt('Browse', 'Choose one or more pictures for this step', () => { setPasteAt(into); pickFiles(into); });
+  zt('📋 Paste', 'Paste a copied screenshot into this step', () => pasteButton(into, `into Step ${n}`));
+  zone.append(zb);
+  wrap.append(zone);
+  dropZone(wrap, into);
+  // click anywhere on the step (not on a button): it is highlighted and Ctrl+V puts pictures into it
+  wrap.addEventListener('click', (e) => {
+    if (e.target.closest('button, a, select')) return;
+    if (!(pasteAt && pasteAt.into === s.id)) setPasteAt(into, `Step ${n} is highlighted: Ctrl+V adds the picture to it (Esc = off).`);
+  });
   requestAnimationFrame(() => autosize(desc));
   return wrap;
 }
@@ -501,14 +548,22 @@ function render() {
   // numbering starts again at 1 in every section
   let n = 0;
   const numbered = [];
+  let secName = '';
   steps.forEach((s, i) => {
+    // an "add pictures here" bar before every item
+    if (i === 0) box.append(insBar(s, 'at the top'));
+    else if (isSec(s)) box.append(insBar(s, `at the end of ${secName ? `“${secName}”` : word('the steps above', 'the steps above')}`));
+    else box.append(insBar(s, n ? `between Step ${n} and Step ${n + 1}${secName ? ` of “${secName}”` : ''}` : `at the start of ${secName ? `“${secName}”` : 'this part'}`));
     if (isSec(s)) {
       n = 0;
+      secName = s.title || word('Untitled section', 'Untitled test case');
       let count = 0;
       for (let k = i + 1; k < steps.length && !isSec(steps[k]); k++) count++;
       box.append(renderSection(s, i, count));
     } else { box.append(renderStep(s, i, ++n)); numbered.push([s, n]); }
   });
+  if (steps.length) box.append(insBar(null, 'at the end'));
+  if (pasteAt) setPasteAt(pasteAt); // show where Ctrl+V goes again after a redraw
   const sw = word('section', 'test case');
   $('meta').textContent = `${stepCount} step${stepCount === 1 ? '' : 's'}${secCount ? ` in ${secCount} ${sw}${secCount === 1 ? '' : 's'}` : ''} • Created ${nowText()}`;
   renderSummary();
@@ -530,7 +585,7 @@ function syncNumbers(list) {
         if (await syncNumber(s, n)) {
           await dbPutIfExists('steps', s);
           changed = true;
-          const img = document.querySelector(`#s-${s.id} img`);
+          const img = document.querySelector(`#s-${s.id} img.main`);
           if (img) { const u = URL.createObjectURL(s.blob); urls.push(u); img.src = u; }
         }
       } catch (e) { console.error('renumber failed', e); }
@@ -635,27 +690,200 @@ const known = new Set();
 let knownReady = false;
 
 // ---------------- adding images ----------------
-async function addImageBlob(blob) {
-  const all = await getSteps();
-  const order = all.reduce((m, s) => Math.max(m, s.order), 0) + 1;
-  await dbPut('steps', { id: uid(), order, doc: mode, blob, title: '', desc: '', url: '', ts: Date.now() });
+// A step's pictures, in order: the main one (s.blob, with s.cap / s.edit / the click marker s.raw + s.mark + s.num),
+// then s.extra = [{ blob, cap?, edit?, raw?, mark?, num? }]. Every picture has its own caption.
+const PIC_KEYS = ['blob', 'cap', 'edit', 'raw', 'mark', 'num'];
+const extrasOf = (s) => (s.extra || []).filter((x) => x && x.blob);
+const isImage = (f) => f && /^image\//.test(f.type);
+/** [{ blob, cap, …, ref }] — ref is the object to change for that picture (the step itself for the main one) */
+function picsOf(s) {
+  const out = s.blob ? [{ ...pick(s), ref: s }] : [];
+  for (const x of extrasOf(s)) out.push({ ...pick(x), ref: x });
+  return out;
 }
-$('addFile').addEventListener('change', async (e) => {
-  for (const f of e.target.files) await addImageBlob(f);
-  e.target.value = '';
+function pick(o) {
+  const out = {};
+  for (const k of PIC_KEYS) if (o[k] !== undefined && o[k] !== null) out[k] = o[k];
+  return out;
+}
+/** store a new picture order: the first one becomes the main picture */
+async function setPics(s, list) {
+  const [first, ...rest] = list;
+  for (const k of PIC_KEYS) delete s[k];
+  if (first) Object.assign(s, pick(first));
+  else s.blob = null;
+  s.extra = rest.map(pick);
+  s.rev = Date.now();
+  await dbPutIfExists('steps', s);
   await reload(true);
+}
+
+// new steps, one per picture, placed before steps[at] (at = steps.length: at the end)
+async function insertImages(blobs, at) {
+  blobs = blobs.filter(isImage);
+  if (!blobs.length) return 0;
+  if (at == null || at > steps.length) at = steps.length;
+  const all = await getSteps();
+  const lo = at > 0 ? steps[at - 1].order : (steps.length ? steps[0].order - 1 : 0);
+  const hi = at < steps.length ? steps[at].order : Math.max(lo, all.reduce((m, s) => Math.max(m, s.order), 0)) + blobs.length + 1;
+  const now = Date.now();
+  await dbPutMany('steps', blobs.map((blob, k) => ({
+    id: uid(), order: lo + ((hi - lo) * (k + 1)) / (blobs.length + 1), doc: mode, blob, title: '', desc: '', url: '', ts: now + k,
+  })));
+  await reload(true);
+  return blobs.length;
+}
+// more pictures in one step, after the ones it has
+async function addToStep(s, blobs) {
+  blobs = blobs.filter(isImage);
+  if (!blobs.length) return 0;
+  await setPics(s, [...picsOf(s), ...blobs.map((blob) => ({ blob }))]);
+  const el = document.getElementById(`s-${s.id}`);
+  const pics = el ? el.querySelectorAll('.pic') : [];
+  if (pics.length) pics[pics.length - 1].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  toast(`${blobs.length} picture${blobs.length === 1 ? '' : 's'} added to the step — add a caption above ${blobs.length === 1 ? 'it' : 'each one'} if you like`, 3000);
+  return blobs.length;
+}
+async function removeImage(s, k, n) {
+  const list = picsOf(s);
+  if (!confirm(`Remove picture ${k + 1} of Step ${n}${list[k].cap ? ` (“${list[k].cap}”)` : ''}?\n\nThis cannot be undone.`)) return;
+  list.splice(k, 1);
+  await setPics(s, list);
+}
+async function movePic(s, k, dir) {
+  const list = picsOf(s);
+  const j = k + dir;
+  if (j < 0 || j >= list.length) return;
+  [list[k], list[j]] = [list[j], list[k]];
+  await setPics(s, list);
+}
+// another picture in the same place: the caption stays, old drawings and click marker go
+async function replacePic(s, k, file) {
+  if (!isImage(file)) return file && toast('Please choose a picture');
+  const list = picsOf(s);
+  list[k] = { blob: file, cap: list[k].cap };
+  await setPics(s, list);
+}
+
+// where Ctrl+V / "Paste" puts pictures: { before: step id | null (end) } = new steps there, { into: step id } = into that step
+let pasteAt = null;
+function setPasteAt(t, label) {
+  pasteAt = t;
+  document.querySelectorAll('.paste-here').forEach((el) => el.classList.remove('paste-here'));
+  const el = !t ? null : t.into ? document.getElementById(`s-${t.into}`) : document.querySelector(`.ins[data-before="${t.before || ''}"]`);
+  if (el) el.classList.add('paste-here');
+  if (label) toast(label, 3500);
+}
+async function putImages(blobs, t = pasteAt) {
+  if (t && t.into) {
+    const s = steps.find((x) => x.id === t.into);
+    if (s) return addToStep(s, blobs);
+  }
+  let at = steps.length;
+  if (t && t.before) { const i = steps.findIndex((x) => x.id === t.before); if (i >= 0) at = i; }
+  const n = await insertImages(blobs, at);
+  if (n) setPasteAt(t); // keep the marker where it was (the page was redrawn)
+  return n;
+}
+// read pictures straight from the clipboard (the browser may ask once); null when that is not allowed
+async function clipboardImages() {
+  try {
+    const out = [];
+    for (const item of await navigator.clipboard.read()) {
+      const type = item.types.find((x) => x.startsWith('image/'));
+      if (type) out.push(await item.getType(type));
+    }
+    return out;
+  } catch (e) { return null; }
+}
+async function pasteButton(t, where) {
+  const imgs = await clipboardImages();
+  if (imgs && imgs.length) return putImages(imgs, t);
+  setPasteAt(t, imgs ? 'No picture on the clipboard. Copy a screenshot (e.g. Win+Shift+S), then press Ctrl+V here.' : `Press Ctrl+V now to paste ${where}.`);
+}
+// a hidden file picker shared by every "＋ Image" button
+function pickFiles(t, done) {
+  const inp = Object.assign(document.createElement('input'), { type: 'file', accept: 'image/*', multiple: !done });
+  inp.addEventListener('change', () => (done ? done([...inp.files]) : putImages([...inp.files], t)));
+  inp.click();
+}
+// pictures dragged from the desktop / Explorer onto an element
+function dropZone(el, t) {
+  el.addEventListener('dragover', (e) => {
+    if (![...(e.dataTransfer?.types || [])].includes('Files')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    el.classList.add('drop-on');
+  });
+  el.addEventListener('dragleave', (e) => { if (!el.contains(e.relatedTarget)) el.classList.remove('drop-on'); });
+  el.addEventListener('drop', (e) => {
+    el.classList.remove('drop-on');
+    const files = [...(e.dataTransfer?.files || [])].filter(isImage);
+    if (!files.length) return;
+    e.preventDefault();
+    e.stopPropagation();
+    putImages(files, t);
+  });
+}
+// the thin "add here" bar between two items
+function insBar(before, label) {
+  const t = { before: before ? before.id : null };
+  const bar = document.createElement('div');
+  bar.className = 'ins noprint';
+  bar.dataset.before = t.before || '';
+  bar.title = `Add pictures ${label}: choose files, paste (Ctrl+V) or drop them here. Several at once = several steps.`;
+  const add = Object.assign(document.createElement('button'), { textContent: '＋ Image here', title: `Choose one or more pictures — each becomes a new step ${label}` });
+  add.addEventListener('click', (e) => { e.stopPropagation(); setPasteAt(t); pickFiles(t); });
+  const paste = Object.assign(document.createElement('button'), { textContent: '📋 Paste here', title: `Paste a copied screenshot as a new step ${label}` });
+  paste.addEventListener('click', (e) => { e.stopPropagation(); pasteButton(t, label); });
+  bar.append(add, paste);
+  bar.addEventListener('click', () => setPasteAt(t, `Ctrl+V now adds pictures ${label}.`));
+  dropZone(bar, t);
+  return bar;
+}
+
+$('addFile').addEventListener('change', async (e) => {
+  const files = [...e.target.files];
+  e.target.value = '';
+  await putImages(files, null); // the top button: at the end
 });
 document.addEventListener('paste', async (e) => {
   if (!$('edModal').hidden) return;
-  if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
   const items = [...(e.clipboardData?.items || [])].filter((i) => i.type.startsWith('image/'));
   if (!items.length) return;
-  for (const it of items) await addImageBlob(it.getAsFile());
-  await reload(true);
-  toast('Pasted image added as a new step');
+  let t = pasteAt;
+  if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) {
+    // typing in a field: text is pasted as usual; a picture (with no text) goes into that field's step
+    if ((e.clipboardData.getData('text/plain') || '').trim()) return;
+    const st = e.target.closest('.step');
+    if (!st) return;
+    t = { into: st.id.replace(/^s-/, '') };
+  }
+  e.preventDefault();
+  const n = await putImages(items.map((it) => it.getAsFile()), t);
+  if (n && !(t && t.into)) toast(n === 1 ? 'Pasted image added as a new step' : `${n} pasted images added as new steps`);
+});
+// a highlighted step / bar: Ctrl+V goes there. Escape: back to "at the end".
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('edModal').hidden && pasteAt) setPasteAt(null, 'Ctrl+V adds pictures at the end again.'); });
+// pictures dropped anywhere else on the page: new steps where Ctrl+V would put them (instead of the browser opening the file)
+document.addEventListener('dragover', (e) => { if ([...(e.dataTransfer?.types || [])].includes('Files')) e.preventDefault(); });
+document.addEventListener('drop', (e) => {
+  const files = [...(e.dataTransfer?.files || [])];
+  if (!files.length) return;
+  e.preventDefault();
+  if (!$('edModal').hidden) return;
+  if (!files.some(isImage)) return toast('Only pictures can be dropped here');
+  putImages(files);
 });
 
 // ---------------- export ----------------
+// a step's extra pictures for an export: [{ blob, dataUrl }] (none when the step's pictures are left out)
+async function morePics(s, keep, dataUrls) {
+  if (!keep) return [];
+  const out = [];
+  for (const x of extrasOf(s)) out.push({ blob: x.blob, cap: String(x.cap || '').trim(), dataUrl: dataUrls ? await blobToDataUrl(x.blob) : '' });
+  return out;
+}
 // -> { title, groups: [{ title|null, items: [{ n, title, desc, blob, dataUrl }] }], logo }
 // dataUrls = false: only the picture Blobs (the Word export does not need the text form)
 async function collect(dataUrls = true) {
@@ -669,7 +897,7 @@ async function collect(dataUrls = true) {
     const items = [];
     for (let k = 0; k < g.items.length; k++) {
       const s = g.items[k];
-      items.push({ n: k + 1, title: s.title || '', desc: s.desc || '', blob: s.blob || null, dataUrl: s.blob && dataUrls ? await blobToDataUrl(s.blob) : '' });
+      items.push({ n: k + 1, title: s.title || '', desc: s.desc || '', cap: String(s.cap || '').trim(), blob: s.blob || null, dataUrl: s.blob && dataUrls ? await blobToDataUrl(s.blob) : '', more: await morePics(s, s.blob, dataUrls) });
     }
     out.push({ title: g.sec ? g.sec.title || 'Untitled section' : null, items });
   }
@@ -691,7 +919,7 @@ function buildHtml(title, gs, logo) {
   const body = gs.map((g, gi) => `${g.title ? `<h2 class="sec" id="sec-${gi + 1}">${esc(g.title)}</h2>` : ''}${g.items
     .map((it) => `<div class="step" id="${anchor(gi, it.n)}"><h3><span class="n">Step ${it.n}</span>${it.title ? ' ' + esc(it.title) : ''}</h3>${
       it.desc ? `<p>${esc(it.desc).replace(/\n/g, '<br>')}</p>` : ''
-    }${it.dataUrl ? `<img src="${it.dataUrl}" alt="Step ${it.n}">` : ''}</div>`)
+    }${[it.dataUrl ? it : null, ...(it.more || [])].filter(Boolean).map((m, k) => `<figure>${m.cap ? `<figcaption>${esc(m.cap)}</figcaption>` : ''}<img src="${m.dataUrl}" alt="${esc(m.cap || `Step ${it.n}${k ? ` — picture ${k + 1}` : ''}`)}"></figure>`).join('')}</div>`)
     .join('\n')}`).join('\n');
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>
 body{font-family:Arial,Helvetica,sans-serif;max-width:860px;margin:30px auto;padding:0 16px;color:#111827;line-height:1.5}
@@ -700,7 +928,7 @@ h1{margin:0;color:#111827}.meta{color:#6b7280;font-size:12px;margin-top:6px}
 .toc{background:#f9fafb;border-left:4px solid ${c};padding:8px 18px;margin:18px 0}.toc h2{font-size:15px;margin:6px 0}.toc a{color:${c};text-decoration:none}.toc ol ol{margin:2px 0 6px}
 h2.sec{font-size:22px;color:${c};border-bottom:2px solid ${c};padding-bottom:4px;margin:36px 0 8px;page-break-before:auto}
 .step{margin:22px 0;page-break-inside:avoid}h3{font-size:17px;margin-bottom:6px}.n{background:${c};color:#fff;padding:2px 9px;border-radius:5px;margin-right:6px}
-img{max-width:100%;border:1px solid #d1d5db}
+figure{margin:10px 0 0}figcaption{font-size:13px;font-weight:600;color:#374151;margin-bottom:4px}img{max-width:100%;border:1px solid #d1d5db;display:block}
 </style></head><body><div class="head">${logo ? `<img src="${logo}" alt="">` : ''}<h1>${esc(title)}</h1></div><div class="meta">${total} steps${gs.some((g) => g.title) ? ` • ${gs.filter((g) => g.title).length} sections` : ''} • ${esc(nowText())}</div>${toc}${body}</body></html>`;
 }
 
@@ -720,7 +948,7 @@ async function collectEvidence(dataUrls = true) {
       const keep = !!s.blob && (shots === 'all' || (shots === 'key' && (s.check || k === g.items.length - 1)));
       list.push({
         n: k + 1, title: s.title || '', desc: s.desc || '', check: !!s.check, status: s.status, expected: s.expected || '', actual: s.actual || '',
-        blob: keep ? s.blob : null, dataUrl: keep && dataUrls ? await blobToDataUrl(s.blob) : '',
+        cap: String(s.cap || '').trim(), blob: keep ? s.blob : null, dataUrl: keep && dataUrls ? await blobToDataUrl(s.blob) : '', more: await morePics(s, keep, dataUrls),
       });
     }
     if (g.sec) {
@@ -854,11 +1082,14 @@ function bindExport() {
       for (const it of g.items) {
         md += `<a id="g${gi + 1}-step-${it.n}"></a>\n\n### Step ${it.n}${it.title ? ': ' + it.title : ''}\n\n`;
         if (it.desc) md += `${it.desc}\n\n`;
-        if (it.blob) {
-          const f = `images/${String(++img).padStart(3, '0')}-step-${it.n}.png`;
-          md += `![Step ${it.n}](${f})\n\n`;
-          zip.file(f, it.blob);
-        }
+        [it.blob ? it : null, ...(it.more || [])].filter(Boolean).forEach((m, k) => {
+          const b = m.blob;
+          const ext = /jpe?g/.test(b.type) ? 'jpg' : /webp/.test(b.type) ? 'webp' : /gif/.test(b.type) ? 'gif' : 'png';
+          const f = `images/${String(++img).padStart(3, '0')}-step-${it.n}${k ? `-${k + 1}` : ''}.${ext}`;
+          if (m.cap) md += `**${m.cap}**\n\n`;
+          md += `![${m.cap || `Step ${it.n}${k ? ` — picture ${k + 1}` : ''}`}](${f})\n\n`;
+          zip.file(f, b);
+        });
       }
     });
     zip.file('manual.md', md);
@@ -920,7 +1151,18 @@ function bindBrand() {
 // ---------------- backup / restore ----------------
 let pendingRestore = null;
 function bindBackup() {
-  $('backupBtn').addEventListener('click', async () => {
+  // "⬇ Backup" opens a small menu: .zip or .json (both hold everything, Restore reads either)
+  const menu = $('backupMenu');
+  const closeMenu = () => { menu.hidden = true; $('backupBtn').setAttribute('aria-expanded', 'false'); };
+  $('backupBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.hidden = !menu.hidden;
+    $('backupBtn').setAttribute('aria-expanded', String(!menu.hidden));
+  });
+  document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) closeMenu(); });
+  menu.querySelectorAll('[data-fmt]').forEach((b) => b.addEventListener('click', () => { closeMenu(); backup(b.dataset.fmt); }));
+  async function backup(fmt) {
     try {
       const items = await getSteps();
       if (!items.length && !confirm('The manual is empty. Make a backup anyway?')) return;
@@ -928,15 +1170,16 @@ function bindBackup() {
       for (const k of KV_KEYS) { const r = await dbGet('kv', k); if (r) kv[k] = r.value; }
       const { settings } = await chrome.storage.local.get('settings');
       toast('Preparing the backup…', 4000);
-      const blob = await makeBackup({ items, kv, settings, appVersion: chrome.runtime.getManifest().version });
-      const name = `EvidenceKit-backup_${fileStamp(Date.now())}.zip`;
+      const make = fmt === 'json' ? makeBackupJson : makeBackup;
+      const blob = await make({ items, kv, settings, appVersion: chrome.runtime.getManifest().version });
+      const name = `EvidenceKit-backup_${fileStamp(Date.now())}.${fmt === 'json' ? 'json' : 'zip'}`;
       download(blob, name);
       const n = items.filter((s) => !isSec(s)).length;
       showOk('Backup saved', `${n} step${n === 1 ? '' : 's'}, ${items.length - n} section${items.length - n === 1 ? '' : 's'} / test cases and all pictures → ${name} (${(blob.size / 1048576).toFixed(1)} MB)`);
     } catch (e) {
       alert('Backup failed: ' + e.message);
     }
-  });
+  }
   $('restoreFile').addEventListener('change', async (e) => {
     const f = e.target.files[0];
     e.target.value = '';

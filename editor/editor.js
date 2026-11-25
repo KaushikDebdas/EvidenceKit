@@ -10,6 +10,7 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const capId = params.get('id');
 const stepId = params.get('step');
+const imgNo = +params.get('img') || 0; // 0: the step's main picture, k >= 1: its extra picture k (step.extra[k - 1])
 const isNew = params.get('new') === '1';
 const embed = params.get('embed') === '1' && window.parent !== window; // opened inside the User Manual
 const action = params.get('action') || 'edit';
@@ -1118,12 +1119,14 @@ async function saveToStep() {
   const blob = await toBlob(renderFinal(false));
   const st = await dbGet('steps', stepId);
   if (!st) return toast('This step was deleted meanwhile — use Save or Add to Manual instead.', 4500);
+  const target = imgNo ? (st.extra || [])[imgNo - 1] : st;
+  if (!target) return toast('This picture was removed from the step meanwhile.', 4500);
   const json = fcanvas.toJSON(PROPS);
   delete json.backgroundImage;
-  st.blob = blob;
+  target.blob = blob;
   // keep the clean picture + layers, so the step can be edited again and its number can follow the Step number
-  st.edit = { raw: await toBlob(state.raw), json, frame: !!frame.on };
-  if ((json.objects || []).some((o) => o.autoNum)) st.num = +params.get('n') || st.num;
+  target.edit = { raw: await toBlob(state.raw), json, frame: !!frame.on };
+  if (!imgNo && (json.objects || []).some((o) => o.autoNum)) st.num = +params.get('n') || st.num;
   st.rev = Date.now();
   await dbPut('steps', st);
   success('Step image saved', 'Your changes are saved with this step.');
@@ -1320,10 +1323,12 @@ async function boot() {
   if (stepId) {
     const st = await dbGet('steps', stepId);
     if (!st) return (document.body.textContent = 'Step not found.');
-    blob = st.blob;
+    const src = imgNo ? (st.extra || [])[imgNo - 1] : st;
+    if (!src || !src.blob) return (document.body.textContent = 'Picture not found.');
+    blob = src.blob;
     // keep layers editable: reopen the clean picture + the saved annotation objects (not the flattened image)
-    if (st.edit && st.edit.raw) { blob = st.edit.raw; stepInit = { json: st.edit.json }; }
-    else if (st.raw && st.mark) { blob = st.raw; stepInit = { mark: st.mark, n: +params.get('n') || 1 }; }
+    if (src.edit && src.edit.raw) { blob = src.edit.raw; stepInit = { json: src.edit.json }; }
+    else if (!imgNo && st.raw && st.mark) { blob = st.raw; stepInit = { mark: st.mark, n: +params.get('n') || 1 }; }
     meta = { ts: st.ts, url: st.url || '', title: '', logs: null, mode: 'step' };
     state.opts = { ...composeOpts(settings), url: false, time: false, console: false, network: false };
     $('saveStep').style.display = '';
