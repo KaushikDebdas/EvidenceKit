@@ -80,12 +80,12 @@ Click the EvidenceKit icon in the toolbar.
 | Mode | What it does |
 |---|---|
 | **Visible** | What you see now. |
-| **Full page** | Scrolls and stitches the whole page (up to 16 000 px). On app-style pages where only an inner area scrolls (Outlook, Teams, Gmail …), that area is stretched to its full length with the header and sidebars kept in place. |
+| **Full page** | Scrolls and stitches the whole page (up to 16 000 px). On app-style pages where only an inner area scrolls (Outlook, Teams, Gmail …), that area is stretched to its full length with the header and sidebars kept in place. On a **PDF** open in Chrome, every page is drawn one below the other (pages that do not fit in 16 000 px are left out, and the picture says so). For a PDF on your computer (`file:///…`), turn on *Allow access to file URLs* for EvidenceKit in `chrome://extensions`. Reports that open as a PDF in a new tab after a login also work (the PDF is read from that tab). A few are made by a form (POST) and cannot be read again: then only the visible part is taken; download that PDF, open the file in Chrome and press Full page there. |
 | **Area** | Drag a rectangle. The page is frozen first, so open dropdowns, tooltips and hover menus stay in the picture. The mouse wheel unfreezes it and scrolls. |
 | **Element** | Hover a button, card or table and click it. <kbd>↑</kbd> / <kbd>↓</kbd> pick the parent / child element, <kbd>Enter</kbd> captures. Elements taller than the screen are captured in full. |
 | **Dual select** | Select two areas; they are joined in one image (numbered 1 and 2). You can scroll between the first and the second area. |
 | **Split view** | Tick 2–6 tabs from any window; they are captured one after the other and placed side by side, each with its own URL bar. |
-| **Scroll box** | A list, table, chat or frame that scrolls (up/down, sideways or both) is scrolled and captured in full. Sticky header rows and frozen columns appear once. |
+| **Scroll box** | A list, table, chat or frame that scrolls (up/down, sideways or both) is scrolled and captured in full. Sticky header rows and frozen columns appear once. On a PDF it captures all pages, like Full page. |
 | **Mobile view** | The page at iPhone, Pixel, iPad, laptop or a custom size. The window is resized for a moment and put back. The layout is the real responsive layout; it is not a full phone emulation. |
 | **Screen / app** | A screenshot of the whole desktop or of another program's window. |
 | **Open image** | Annotate a picture from your computer or the clipboard. |

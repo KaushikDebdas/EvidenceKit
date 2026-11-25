@@ -336,8 +336,75 @@ function restoreScrollers() {
   scrollTo(x, y);
 }
 
+// ---------- full page of a PDF ----------
+// Chrome's PDF viewer cannot be scrolled or read by an extension: the PDF is drawn page by page instead
+// (offscreen document + pdf.js). If that is not possible, the visible part is taken and the reason is shown.
+async function isPdfTab(tab) {
+  const u = tab.url || '';
+  if (!/^(https?|file|blob):/i.test(u)) return false;
+  const type = await exec(tab.id, () => document.contentType).catch(() => null);
+  return type ? /pdf/i.test(type) : /\.pdf([?#]|$)/i.test(u);
+}
+// The PDF's bytes, read inside the tab: there the report's login, a blob: address and the site's own cookies
+// all still work. null when the tab cannot give them (then the address is loaded again from the extension).
+async function pdfFromTab(tab) {
+  const got = await exec(tab.id, async () => {
+    try {
+      const r = await fetch(location.href, { credentials: 'include' });
+      if (!r.ok) return { err: 'HTTP ' + r.status };
+      const b = await r.blob();
+      if (b.size > 60 * 1048576) return { err: 'too big' };
+      const head = await b.slice(0, 1024).text();
+      if (!head.includes('%PDF-')) return { err: 'not a PDF' }; // e.g. a POST report: a GET gives a login / error page
+      return await new Promise((res) => { const f = new FileReader(); f.onload = () => res({ data: f.result }); f.onerror = () => res({ err: 'read' }); f.readAsDataURL(b); });
+    } catch (e) { return { err: String(e && e.message || e) }; }
+  }).catch((e) => ({ err: e.message }));
+  return got && got.data ? dataUrlToBlob(got.data) : null;
+}
+async function capPdf(tab) {
+  const fromTab = await pdfFromTab(tab);
+  if (!fromTab) {
+    if (/^blob:/i.test(tab.url)) throw new Error('This PDF is no longer available in the tab. Download it (⬇ in the PDF bar), open the downloaded file in Chrome and press Full page there.');
+    if (/^file:/i.test(tab.url) && !(await chrome.extension.isAllowedFileSchemeAccess())) {
+      throw new Error('To capture every page of a PDF from your computer, open chrome://extensions → EvidenceKit → Details and turn on “Allow access to file URLs”.');
+    }
+  }
+  const key = 'tmp-' + uid();
+  const srcKey = fromTab ? key + '-src' : '';
+  if (fromTab) await dbPut('captures', { id: srcKey, blob: fromTab, ts: Date.now(), tmp: true });
+  try {
+    await ensureOffscreen();
+    const r = await Promise.race([ // never wait for ever: a very big PDF gets 90 s
+      chrome.runtime.sendMessage({ target: 'offscreen', type: 'renderPdf', url: tab.url, srcKey, maxH: MAX_IMG_PX, key }),
+      sleep(90000).then(() => ({ error: 'drawing its pages took too long' })),
+    ]);
+    if (!r || !r.ok) {
+      const why = ((r && r.error) || 'no answer').replace(/^Error:\s*/, '');
+      throw new Error(/opened again|downloaded again/.test(why)
+        ? 'This PDF was made only for this tab (after a login or a form) and cannot be loaded again. Download it (⬇ in the PDF bar), open the downloaded file in Chrome and press Full page there.'
+        : 'This PDF could not be read: ' + why);
+    }
+    const rec = await dbGet('captures', key);
+    if (!rec || !rec.blob) throw new Error('This PDF could not be read.');
+    return rec.blob;
+  } finally {
+    await dbDel('captures', key).catch(() => {});
+    if (srcKey) await dbDel('captures', srcKey).catch(() => {});
+  }
+}
+async function capPdfOrVisible(tab) {
+  try {
+    return await capPdf(tab);
+  } catch (e) {
+    const blob = await capVisible(tab);
+    setTimeout(() => pageToast(tab.id, `Only the visible part was captured. ${e.message}`, 'err', { title: 'PDF: not every page' }), 2500);
+    return blob;
+  }
+}
+
 // expand: open inner scroll boxes first (off for an element capture, which crops by the page's normal layout)
 async function capFull(tab, { expand = true } = {}) {
+  if (expand && (await isPdfTab(tab))) return capPdfOrVisible(tab);
   const opened = expand && (await getSettings()).fullScrollAreas !== false
     ? await exec(tab.id, expandScrollers).catch(() => 0) : 0;
   if (!opened) return capFullPage(tab);
@@ -764,7 +831,7 @@ async function ensureOffscreen() {
       const ctxs = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
       if (ctxs.length) return;
     }
-    await chrome.offscreen.createDocument({ url: 'offscreen.html', reasons: ['BLOBS'], justification: 'Create blob URLs to download large screenshots.' });
+    await chrome.offscreen.createDocument({ url: 'offscreen.html', reasons: ['BLOBS', 'WORKERS'], justification: 'Create blob URLs to download large screenshots, and draw the pages of a PDF for a full-page capture.' });
   } catch (e) {
     if (!/single offscreen|already exists/i.test(String(e.message))) throw e;
   }
@@ -973,6 +1040,8 @@ async function doCapture(mode, tab, opts = {}) {
   try {
     const delay = Math.max(0, Math.min(30, +opts.delay || 0));
     if (delay) await countdown(tab.id, delay);
+    // a PDF: "Scroll box" means all its pages, the same as Full page (the viewer cannot be selected in)
+    if (mode === 'scroll' && (await isPdfTab(tab))) return await finalize(tab, await capPdfOrVisible(tab), 'full');
     if (SELECT_MODES.includes(mode)) return await startSelect(tab, mode);
     if (mode === 'mobile') return await capResponsive(tab, opts);
     const blob = mode === 'full' ? await capFull(tab) : await capVisible(tab);
